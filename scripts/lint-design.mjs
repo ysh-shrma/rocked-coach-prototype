@@ -46,15 +46,26 @@ const RULES = [
     id: "v2-token",
     // The six v2-only type tokens. v3 must not read them; they disappear when v2
     // retires, and mixing the two scales is how a system quietly forks.
-    re: /\btext-(display-xl|display|title|body|meta|micro)\b/g,
+    //
+    // The trailing guard matters: `\b` treats a hyphen as a word boundary, so
+    // `text-title\b` also matched the legitimate `text-title-1/2/3`, inflating
+    // this count with correct code. Require the token to end, not continue.
+    re: /\btext-(display-xl|display|title|body|meta|micro)(?![-\w])/g,
     msg: "v2-only type token — v3 uses the HIG scale instead",
   },
   {
     id: "icon-size",
-    // Icons are pinned to 16 or 20 via the Icon wrapper. Larger decorative art
-    // (avatars, plates) is exempt via the allow-comment below.
+    // Icons are pinned to 16 or 20 via the Icon wrapper.
     re: /size=\{(?!16\}|20\})[0-9]+\}/g,
     msg: "off-system icon size — use 16 or 20, or mark the line design-lint-ok",
+    // The rule matches any numeric `size` prop, which is too blunt: several of
+    // our own components take `size` as a layout dimension, not an icon size.
+    // PersonaAvatar does `width: size, height: size, fontSize: size * 0.36` and
+    // CoverageRing does `size / 2`, so "fixing" an 84 to 16 would collapse the
+    // avatar and the ring rather than align an icon. Skip lines that mention
+    // one of these. Btn is not listed because its size is a string union, and
+    // SentimentBar takes no numeric size — neither can match the pattern.
+    skipIfLineMentions: ["PersonaAvatar", "CoverageRing", "RocketMark", "VehiclePlate"],
   },
 ];
 
@@ -81,6 +92,7 @@ for (const file of files) {
     // silent bypass.
     if (line.includes("design-lint-ok")) return;
     for (const rule of RULES) {
+      if (rule.skipIfLineMentions?.some((name) => line.includes(name))) continue;
       const hits = line.match(rule.re);
       if (!hits) continue;
       counts[rule.id] += hits.length;

@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { capabilityById, type CoachingPillar } from "@/data/personas";
 import { needsCoachingScore, repCoverage, repGaps, type AssignedTraining, type Rep } from "@/data/reps";
-import { CoverageRing, DemoDataTag, Mark, cap, rise, TrendChart } from "./ui";
+import { CoverageRing, DemoDataTag, Mark, rise, TrendChart } from "./ui";
 
 const COACHING_LABELS: Record<CoachingPillar, string> = {
   rapport: "Rapport & Trust",
@@ -156,7 +156,7 @@ export function RepDetail({
           {rep.initials}
         </span>
         <div>
-          <p className="text-[19px] font-extrabold tracking-[-0.01em] text-r-ink">{rep.name}</p>
+          <p className="text-title-3 text-r-ink">{rep.name}</p>
           <p className="mono text-[12px] text-r-ink-4">
             Practice avg {rep.practiceScore}/10 &middot; CRM close rate {Math.round(rep.crm.closeRate * 100)}%
           </p>
@@ -177,7 +177,7 @@ export function RepDetail({
           {(Object.keys(COACHING_LABELS) as CoachingPillar[]).map((k) => (
             <div key={k} className="card-lift p-3">
               <div className="flex items-center gap-1">
-                <span className="mono text-[20px] font-extrabold text-r-ink">{rep.coaching[k].current}</span>
+                <span className="mono text-title-2 text-r-ink">{rep.coaching[k].current}</span>
                 <TrendIcon trend={rep.coaching[k].trend} />
               </div>
               <p className="mt-1 text-[11.5px] leading-snug text-r-ink-3">{COACHING_LABELS[k]}</p>
@@ -205,7 +205,13 @@ export function RepDetail({
             {rep.flaggedMoments.map((m, i) => (
               <div key={i} className="card-lift p-3">
                 <p className="text-[12.5px] leading-snug text-r-ink-2">
-                  <span className="font-semibold text-r-ink">Practiced</span> {(() => { const c = capabilityById(m.capabilityId); return c ? cap(c) : m.personaName; })()}, {m.date}
+                  {/* Long label on purpose. The manager view stays on the full
+                      phrasing throughout — a rep scanning a 402px board wants
+                      "Hold the price", but someone deciding what work to hand
+                      out wants the specific version. Also keeps this consistent
+                      with the Coverage gaps list below, whose "Assigned" state
+                      is matched by comparing these label strings. */}
+                  <span className="font-semibold text-r-ink">Practiced</span> {capabilityById(m.capabilityId)?.label ?? m.personaName}, {m.date}
                   {" → "}
                   <span className="font-semibold text-r-ink">Real call</span>, {m.realDate}: {m.realOutcome}
                 </p>

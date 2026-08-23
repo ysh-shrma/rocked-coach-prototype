@@ -42,8 +42,12 @@ export function Hub({
           <ArrowLeft size={20} strokeWidth={2} />
         </button>
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-bold tracking-[-0.01em] text-r-ink">AI Coach — Sales</p>
-          <p className="text-[11.5px] text-r-ink-4">Practice conversations that actually react to you</p>
+          <p className="text-title-3 text-r-ink">AI Coach — Sales</p>
+          {/* "actually" dropped: at footnote size the longer line wrapped to two
+              rows and pushed the header taller. Shorter copy is the fix rather
+              than a smaller size, since the header now sets the screen's
+              hierarchy. */}
+          <p className="text-footnote text-r-ink-4">Practice conversations that react to you</p>
         </div>
         <button
           onClick={onOpenProfile}
@@ -65,7 +69,7 @@ export function Hub({
             >
               <PersonaAvatar name={nextPersona.name} size={48} />
               <span className="min-w-0 flex-1">
-                <span className="block text-[15.5px] font-bold text-r-ink">{nextPersona.name}</span>
+                <span className="block text-title-2 text-r-ink">{nextPersona.name}</span>
                 <span className="mt-[2px] block text-[12.5px] leading-snug text-r-ink-3">{blurb(nextPersona)}</span>
                 {nextReason && (
                   <span className="mt-[6px] block text-[11.5px] leading-snug text-r-ink-4">{nextReason}</span>

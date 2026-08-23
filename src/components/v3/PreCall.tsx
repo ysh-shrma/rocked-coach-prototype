@@ -33,7 +33,7 @@ export function PreCall({
         <motion.p className="mono mt-5 text-[11px] font-semibold uppercase tracking-[0.09em] text-r-brand" {...rise(0.1)}>
           Up next
         </motion.p>
-        <motion.h1 className="mt-2 text-[26px] font-extrabold leading-tight tracking-[-0.015em] text-r-ink" {...rise(0.14)}>
+        <motion.h1 className="mt-2 text-title-1 text-r-ink" {...rise(0.14)}>
           {persona.name}
         </motion.h1>
         <motion.p className="mt-3 text-[15px] leading-relaxed text-r-ink-2" {...rise(0.18)}>

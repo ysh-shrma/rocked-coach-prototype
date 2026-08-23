@@ -86,7 +86,7 @@ export function Home({
       <motion.div className="flex items-center justify-between px-5 pb-3 pt-5" {...rise(0)}>
         {/* The real app puts the flame in a filled gold disc, which is what
             makes it read as a reward rather than a status line. */}
-        <span className="flex items-center gap-[9px] rounded-full bg-r-sunk py-[5px] pl-[5px] pr-4 text-meta font-bold text-r-ink-2">
+        <span className="flex items-center gap-[9px] rounded-full bg-r-sunk py-[5px] pl-[5px] pr-4 text-footnote font-bold text-r-ink-2">
           <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-r-gold">
             <Flame size={14} className="text-white" fill="currentColor" strokeWidth={0} />
           </span>
@@ -106,10 +106,10 @@ export function Home({
           <div className="p-4">
             {performance.state === "empty" ? (
               <>
-                <p className="mono text-micro uppercase text-r-ink-4">
+                <p className="mono text-caption uppercase text-r-ink-4">
                   Your standing
                 </p>
-                <p className="mt-2 text-body text-r-ink-2">
+                <p className="mt-2 text-callout text-r-ink-2">
                   You haven&rsquo;t practiced yet — your first call becomes your starting line.
                 </p>
               </>
@@ -117,17 +117,17 @@ export function Home({
               <>
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="mono text-micro uppercase text-r-ink-4">
+                    <p className="mono text-caption uppercase text-r-ink-4">
                       {performance.headlineLabel}
                     </p>
-                    <p className="mt-[2px] text-display-xl text-r-ink">
+                    <p className="mt-[2px] text-large-title text-r-ink">
                       {performance.headlineValue}
                     </p>
                   </div>
                   {performance.avgPillars && <PillarBars values={performance.avgPillars} />}
                 </div>
                 {performance.gapLabel && (
-                  <p className="mt-3 text-meta font-semibold text-r-ink-2">{performance.gapLabel}</p>
+                  <p className="mt-3 text-footnote font-semibold text-r-ink-2">{performance.gapLabel}</p>
                 )}
               </>
             )}
@@ -153,17 +153,17 @@ export function Home({
               <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-r-brand">
                 <RocketMark size={16} strokeWidth={2.1} />
               </span>
-              <span className="mono text-micro uppercase text-white/70">Next up</span>
+              <span className="mono text-caption uppercase text-white/70">Next up</span>
             </span>
             {/* display, not title: an isolation sweep found Home's largest text
                 was 21px, because display and display-xl only appeared on the
                 Report and on the non-empty standing state. The hero of the
                 first screen has to be the biggest thing on it. */}
-            <span className="mt-3 block text-display text-white">
+            <span className="mt-3 block text-title-1 text-white">
               {nextLabel ?? "Start your first practice call"}
             </span>
             {nextReason && (
-              <span className="mt-2 block text-meta text-white/60">{nextReason}</span>
+              <span className="mt-2 block text-footnote text-white/60">{nextReason}</span>
             )}
             <span className="mt-4 inline-flex items-center gap-[7px] rounded-full bg-white px-4 py-[9px] text-[13.5px] font-bold text-r-ink">
               Start practice call
@@ -176,7 +176,7 @@ export function Home({
             tab-filtered by brand/vendor), replacing Browse by Brands: same
             tab-strip pattern, but with an actual destination per item
             instead of decorative icons that went nowhere. */}
-        <motion.p className="mb-3 mt-7 text-title text-r-ink" {...rise(0.1)}>
+        <motion.p className="mb-3 mt-7 text-title-3 text-r-ink" {...rise(0.1)}>
           Content Library
         </motion.p>
         <motion.div className="flex gap-2 overflow-x-auto pb-1" {...rise(0.12)}>
@@ -202,7 +202,7 @@ export function Home({
                 </span>
               </div>
               <div className="flex flex-1 flex-col gap-1 p-3">
-                <span className="mono text-micro uppercase text-r-gold">Guide</span>
+                <span className="mono text-caption uppercase text-r-gold">Guide</span>
                 <span className="text-[13.5px] font-bold leading-snug">{video.chapterLabel}</span>
                 <span className="mt-1 rounded-full bg-white/15 px-2.5 py-1 text-center text-[11px] font-semibold">
                   Start Now

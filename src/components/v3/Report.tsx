@@ -264,7 +264,7 @@ function CriticalMomentCard({
       {...rise()}
     >
       <button onClick={() => setOpen((o) => !o)} className="flex w-full items-start gap-3 p-3.5 text-left">
-        <span className={`mt-[1px] text-body font-bold ${bad ? "text-r-bad" : "text-r-amber"}`}>
+        <span className={`mt-[1px] text-callout font-bold ${bad ? "text-r-bad" : "text-r-amber"}`}>
           {moment.headline}
         </span>
         <ChevronDown
@@ -274,7 +274,7 @@ function CriticalMomentCard({
       </button>
       {open && (
         <div className="border-t border-r-line-2 px-3.5 pb-3.5 pt-3">
-          <p className="text-body text-r-ink-2">{moment.detail}</p>
+          <p className="text-callout text-r-ink-2">{moment.detail}</p>
 
           {/* Deliberately subordinate to the callout above: dashed border, smaller,
               secondary weight — this must never look like the primary action, or a

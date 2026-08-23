@@ -45,7 +45,7 @@ export function Profile({
         <button onClick={onBack} className="text-r-ink-3">
           <ArrowLeft size={20} strokeWidth={2} />
         </button>
-        <p className="text-[15px] font-bold tracking-[-0.01em] text-r-ink">Your profile</p>
+        <p className="text-title-3 text-r-ink">Your profile</p>
       </motion.div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
@@ -75,7 +75,7 @@ export function Profile({
               <div className="grid grid-cols-2 gap-2.5">
                 {(Object.keys(avg!) as CoachingPillar[]).map((k) => (
                   <div key={k} className="card-lift p-3">
-                    <p className="mono text-[20px] font-extrabold text-r-ink">
+                    <p className="mono text-title-2 text-r-ink">
                       {avg![k]}
                       <span className="text-[12px] font-medium text-r-ink-4">/10</span>
                     </p>

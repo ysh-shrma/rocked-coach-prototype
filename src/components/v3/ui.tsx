@@ -372,8 +372,8 @@ export function GroundTruthVehicle({ vehicle }: { vehicle: Vehicle }) {
     <div className="flex items-start gap-3 rounded-[14px] border border-white/12 bg-white/[0.06] p-3">
       <VehiclePlate vehicle={vehicle} dark />
       <div className="min-w-0 flex-1">
-        <p className="mono text-micro uppercase text-d-brand">In your lot</p>
-        <p className="mt-[3px] text-body font-bold leading-tight text-d-ink">
+        <p className="mono text-caption uppercase text-d-brand">In your lot</p>
+        <p className="mt-[3px] text-callout font-bold leading-tight text-d-ink">
           {vehicleTitle(vehicle)}
         </p>
         {/* Mono earns its place on the identifiers a rep reads back aloud — a

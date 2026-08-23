@@ -165,10 +165,10 @@ export function Call({
           scale, and a marked walk-away point. */}
       <div className="shrink-0 px-5 pb-3">
         <div className="mb-[7px] flex items-baseline justify-between">
-          <span className="mono text-micro uppercase text-d-ink-3">How she&rsquo;s feeling</span>
+          <span className="mono text-caption uppercase text-d-ink-3">How she&rsquo;s feeling</span>
           <span className="flex items-baseline gap-[5px]">
             <span
-              className={`text-title tabular-nums ${
+              className={`text-title-2 tabular-nums ${
                 ov <= 25 ? "text-r-bad" : ov <= 55 ? "text-r-amber" : "text-r-ok"
               }`}
             >
