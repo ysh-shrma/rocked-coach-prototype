@@ -38,11 +38,53 @@ export const objective = (p: { objectiveShort?: string; objective: string }) =>
   p.objectiveShort ?? p.objective;
 
 export const ease = [0.16, 1, 0.3, 1] as const;
-export const rise = (delay = 0) => ({
-  initial: { opacity: 0, y: 12 },
+
+/**
+ * Motion, reduced to two forms.
+ *
+ * v2 had 32 `rise()` call sites spread across 16 distinct delays, so every
+ * screen played a ~0.5s staggered cascade before it settled. A reviewer clicking
+ * quickly was fighting the animation, and the stagger carried no information —
+ * the order things appear in is not something the rep needs to learn.
+ *
+ * `rise()` now ignores its delay argument entirely rather than being removed
+ * from 32 call sites: one shorter entrance for the whole screen, applied
+ * uniformly. Keeping the signature means the sweep can drop the arguments
+ * gradually without a flag day, and the delay ladder is already dead in the
+ * meantime.
+ *
+ * `shift()` is the other form: a state change that the rep *should* notice —
+ * a sentiment drop landing, a sheet arriving, a call ending.
+ */
+export const rise = (_delay = 0) => ({
+  initial: { opacity: 0, y: 8 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5, delay, ease },
+  transition: { duration: 0.28, ease },
 });
+
+export const shift = {
+  initial: { opacity: 0, y: 10, scale: 0.98 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+  transition: { duration: 0.42, ease },
+};
+
+/**
+ * Every icon in v3 goes through here, pinned to two sizes and one stroke. v2
+ * had 12 distinct icon sizes and 10 stroke widths, which reads as a slightly
+ * different hand drawing each screen.
+ */
+export function Icon({
+  as: Cmp,
+  size = 20,
+  className = "",
+}: {
+  as: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>;
+  /** 16 for inline/dense, 20 for standalone. Nothing else. */
+  size?: 16 | 20;
+  className?: string;
+}) {
+  return <Cmp size={size} strokeWidth={2} className={className} />;
+}
 
 export function Btn({
   children,
@@ -51,6 +93,7 @@ export function Btn({
   size = "md",
   className = "",
   disabled = false,
+  loading = false,
 }: {
   children: React.ReactNode;
   onClick?: () => void;
@@ -58,26 +101,45 @@ export function Btn({
   size?: "lg" | "md" | "sm";
   className?: string;
   disabled?: boolean;
+  /** Shows a spinner and blocks the press. */
+  loading?: boolean;
 }) {
+  /**
+   * Real states, not just default + hover. v2 had 21 hover styles, 5 active, 2
+   * disabled and 1 focus across the whole tree — and hover does nothing on a
+   * phone. `active:scale` is what makes a tap feel acknowledged, which is the
+   * single most native-feeling detail available in CSS.
+   */
   const variants: Record<string, string> = {
-    primary: "bg-r-brand text-white border-r-brand hover:bg-r-brand-hover",
-    secondary: "bg-white text-r-ink border-r-line hover:border-r-ink-4",
-    quiet: "bg-transparent text-r-ink-3 border-transparent hover:bg-r-sunk",
+    primary:
+      "bg-brand-500 text-white border-brand-500 hover:bg-brand-600 active:bg-brand-700",
+    secondary:
+      "bg-surface text-r-ink border-separator hover:border-separator-strong active:bg-surface-grouped",
+    quiet:
+      "bg-transparent text-r-ink-3 border-transparent hover:bg-surface-grouped active:bg-surface-grouped-2",
     dashed:
-      "bg-transparent text-r-ink-3 border-dashed border-r-ink-4 hover:border-r-brand hover:text-r-brand",
-    bad: "bg-r-bad text-white border-r-bad",
+      "bg-transparent text-r-ink-3 border-dashed border-r-ink-4 hover:border-brand-500 hover:text-brand-500 active:bg-brand-50",
+    bad: "bg-bad-500 text-white border-bad-500 hover:bg-bad-600 active:bg-bad-700",
   };
   const sizes: Record<string, string> = {
-    lg: "px-6 py-[13px] text-[15px]",
-    md: "px-[16px] py-[9px] text-[14px]",
-    sm: "px-[12px] py-[6px] text-[12.5px]",
+    lg: "px-6 py-3 text-callout font-bold",
+    md: "px-4 py-2 text-subhead font-bold",
+    sm: "px-3 py-1 text-footnote font-bold",
   };
+  const blocked = disabled || loading;
   return (
     <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`inline-flex items-center justify-center gap-[7px] rounded-full border font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${variants[variant]} ${sizes[size]} ${className}`}
+      onClick={blocked ? undefined : onClick}
+      disabled={blocked}
+      aria-busy={loading || undefined}
+      className={`inline-flex items-center justify-center gap-2 rounded-full border transition-all duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40 disabled:active:scale-100 ${variants[variant]} ${sizes[size]} ${className}`}
     >
+      {loading && (
+        <span
+          className="h-4 w-4 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+          aria-hidden="true"
+        />
+      )}
       {children}
     </button>
   );
