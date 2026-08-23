@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ChevronDown, RotateCcw } from "lucide-react";
 import type { CoachingPillar, Persona } from "@/data/personas";
 import type { SessionResult } from "@/lib/session";
-import { Btn, Mark, rise, SentimentBar, line, say } from "./ui";
+import { Btn, rise, SentimentBar, line, say } from "./ui";
 
 const COACHING_LABELS: Record<CoachingPillar, string> = {
   rapport: "Rapport & Trust",
@@ -27,30 +27,52 @@ export function Report({
    *  session went well — Hub then just recommends the next untried persona. */
   onBackToHub: (signal: string | null) => void;
 }) {
+  /**
+   * The outcome is the whole point of the screen, so it gets said in words a
+   * sales manager would use, not just colour-coded. v1 rendered it as a 13px
+   * pill — quieter than the section labels below it — which is the exact
+   * failure product-spec Improvement 3 describes: a rep reading a bad call as
+   * "partway there" because nothing on screen says otherwise.
+   */
   const outcomeCopy =
     result.outcome === "lost"
-      ? { label: "Lost the customer", tone: "bad" as const }
+      ? {
+          label: "You lost her.",
+          sub: "A real customer doesn't come back from this.",
+          tone: "bad" as const,
+          band: "bg-r-bad-tint",
+          ink: "text-r-bad",
+        }
       : result.outcome === "closed"
-        ? { label: "Closed — next step locked in", tone: "ok" as const }
-        : { label: "Call ended without a firm next step", tone: "brand" as const };
+        ? {
+            label: "Closed.",
+            sub: "Next step locked in — that's the whole job.",
+            tone: "ok" as const,
+            band: "bg-r-ok-tint",
+            ink: "text-r-ok",
+          }
+        : {
+            label: "No commitment.",
+            sub: "She didn't walk, but you didn't close either.",
+            tone: "brand" as const,
+            band: "bg-r-brand-tint",
+            ink: "text-r-brand",
+          };
 
   const weakSignal = result.outcome === "lost" || !result.capabilityProven ? persona.capabilityId : null;
 
   return (
     <div className="flex h-full flex-col bg-white">
-      <motion.div className="shrink-0 border-b border-r-line px-5 py-4" {...rise(0)}>
-        <p className="mono text-[11px] font-semibold uppercase tracking-[0.09em] text-r-ink-4">
-          {persona.name}
-        </p>
-        <div className="mt-2 flex items-center gap-2">
-          <Mark tone={outcomeCopy.tone}>{outcomeCopy.label}</Mark>
-        </div>
+      <motion.div className={`shrink-0 px-5 pb-5 pt-4 ${outcomeCopy.band}`} {...rise(0)}>
+        <p className="mono text-micro uppercase text-r-ink-4">{persona.name}</p>
+        <p className={`mt-2 text-display ${outcomeCopy.ink}`}>{outcomeCopy.label}</p>
+        <p className="mt-[6px] text-meta font-medium text-r-ink-2">{outcomeCopy.sub}</p>
       </motion.div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
         {result.criticalMoments.length > 0 && (
           <motion.section className="mb-6" {...rise(0.05)}>
-            <p className="mono mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+            <p className="mono mb-2 text-micro uppercase text-r-ink-4">
               Critical moments
             </p>
             <div className="flex flex-col gap-2">
@@ -62,7 +84,7 @@ export function Report({
         )}
 
         <motion.section className="mb-6" {...rise(0.1)}>
-          <p className="mono mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+          <p className="mono mb-2 text-micro uppercase text-r-ink-4">
             Customer sentiment
           </p>
           <div className="card-lift flex flex-col gap-3 p-4">
@@ -73,17 +95,19 @@ export function Report({
         </motion.section>
 
         <motion.section className="mb-4" {...rise(0.15)}>
-          <p className="mono mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+          <p className="mono mb-2 text-micro uppercase text-r-ink-4">
             Coaching score
           </p>
           <div className="grid grid-cols-2 gap-2.5">
             {(Object.keys(COACHING_LABELS) as CoachingPillar[]).map((k) => (
               <div key={k} className="card-lift p-3">
-                <p className="mono text-[20px] font-extrabold text-r-ink">
+                <p className="text-title tabular-nums text-r-ink">
                   {result.coaching[k]}
-                  <span className="text-[12px] font-medium text-r-ink-4">/10</span>
+                  <span className="text-meta font-semibold text-r-ink-4">/10</span>
                 </p>
-                <p className="mt-1 text-[12px] leading-snug text-r-ink-3">{COACHING_LABELS[k]}</p>
+                <p className="mt-[3px] text-[12px] font-medium leading-snug text-r-ink-3">
+                  {COACHING_LABELS[k]}
+                </p>
               </div>
             ))}
           </div>
@@ -118,7 +142,7 @@ function CriticalMomentCard({
       {...rise(delay)}
     >
       <button onClick={() => setOpen((o) => !o)} className="flex w-full items-start gap-3 p-3.5 text-left">
-        <span className={`mt-[2px] text-[13px] font-semibold ${bad ? "text-r-bad" : "text-r-amber"}`}>
+        <span className={`mt-[1px] text-body font-bold ${bad ? "text-r-bad" : "text-r-amber"}`}>
           {moment.headline}
         </span>
         <ChevronDown
@@ -128,7 +152,7 @@ function CriticalMomentCard({
       </button>
       {open && (
         <div className="border-t border-r-line-2 px-3.5 pb-3.5 pt-3">
-          <p className="text-[13.5px] leading-relaxed text-r-ink-2">{moment.detail}</p>
+          <p className="text-body text-r-ink-2">{moment.detail}</p>
 
           {/* Deliberately subordinate to the callout above: dashed border, smaller,
               secondary weight — this must never look like the primary action, or a

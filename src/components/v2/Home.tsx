@@ -155,7 +155,11 @@ export function Home({
               </span>
               <span className="mono text-micro uppercase text-white/70">Next up</span>
             </span>
-            <span className="mt-3 block text-title text-white">
+            {/* display, not title: an isolation sweep found Home's largest text
+                was 21px, because display and display-xl only appeared on the
+                Report and on the non-empty standing state. The hero of the
+                first screen has to be the biggest thing on it. */}
+            <span className="mt-3 block text-display text-white">
               {nextLabel ?? "Start your first practice call"}
             </span>
             {nextReason && (
