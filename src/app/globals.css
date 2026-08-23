@@ -49,6 +49,65 @@
   --color-d-brand: #8f74f3;
 
   --font-plex: var(--font-plex-mono), ui-monospace, Menlo, monospace;
+  --font-jakarta: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------------------------------------------------------------
+     v2 type scale.
+
+     v1 put ~150 of its ~153 font-size declarations between 9.5px and
+     15.5px — a ~1.5x range, which is why every screen read as one flat
+     block of text with nothing to anchor the eye. RockED's own app runs
+     closer to 4x: screen titles land near 40px extrabold
+     (app-screenshot/IMG_1408.PNG, IMG_1397.PNG).
+
+     Six steps, deliberately few, with real jumps between them. Anything
+     that needs a size not on this list is a sign the hierarchy is wrong,
+     not that the scale is missing a step.
+     --------------------------------------------------------------- */
+  --text-display-xl: 40px;
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--font-weight: 800;
+  --text-display-xl--letter-spacing: -0.035em;
+
+  --text-display: 30px;
+  --text-display--line-height: 1.05;
+  --text-display--font-weight: 800;
+  --text-display--letter-spacing: -0.028em;
+
+  --text-title: 21px;
+  --text-title--line-height: 1.25;
+  --text-title--font-weight: 700;
+  --text-title--letter-spacing: -0.018em;
+
+  --text-body: 15px;
+  --text-body--line-height: 1.45;
+
+  --text-meta: 13px;
+  --text-meta--line-height: 1.4;
+
+  --text-micro: 11px;
+  --text-micro--line-height: 1.3;
+  --text-micro--font-weight: 600;
+  --text-micro--letter-spacing: 0.09em;
+
+  /* Three elevation tiers, replacing v1's single shadow recipe. */
+  --shadow-e1: 0 1px 2px rgba(30, 15, 60, 0.04);
+  --shadow-e2: 0 1px 2px rgba(30, 15, 60, 0.05), 0 10px 28px -14px rgba(30, 15, 60, 0.18);
+  --shadow-e3: 0 -24px 60px -20px rgba(8, 10, 18, 0.35);
+
+  /* Gold, for points and streaks. RockED's third accent after purple and
+     ink — see the leaderboard's star/point rows. v1 had no equivalent and
+     reached for amber, which already means "assumed/seeded data" here. */
+  --color-r-gold: #f0a92a;
+  --color-r-gold-tint: #fdf3e0;
+}
+
+/* ---- v2 scope ----
+   The only thing this class changes globally is the type face. Every other
+   v2 token above is inert until a v2 component applies its utility, which
+   is what keeps `/` byte-identical while `/v2` diverges. */
+.v2 {
+  font-family: var(--font-jakarta);
 }
 
 html {
