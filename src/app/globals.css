@@ -142,6 +142,39 @@
   position: relative;
 }
 
+/* ---- v3 scope ----
+   Deliberately duplicated from .v2 above rather than written as a shared
+   `.v2, .v3` selector. /v2 is frozen, and a shared selector would mean every
+   later v3 change to the hero surface silently restyles it. The duplication
+   costs a few lines now and removes the coupling entirely; both blocks can
+   collapse into one when v2 is retired. */
+.v3 {
+  font-family: var(--font-jakarta);
+}
+
+.v3 .hero-dark {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(115% 85% at 12% -5%, rgba(126, 90, 255, 0.42), transparent 62%),
+    linear-gradient(168deg, #251b55 0%, #191631 44%, #100f19 100%);
+}
+.v3 .hero-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(95% 75% at 50% 15%, #000 22%, transparent 78%);
+  mask-image: radial-gradient(95% 75% at 50% 15%, #000 22%, transparent 78%);
+}
+.v3 .hero-dark > * {
+  position: relative;
+}
+
 html {
   -webkit-font-smoothing: antialiased;
 }
