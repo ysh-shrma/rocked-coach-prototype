@@ -174,33 +174,39 @@ export function RocketMark({
 }
 
 /**
- * Partner logotypes. Real marks aren't available, so this is a monogram
- * *system* rather than `name[0]` in a box: a fixed-width tile, the brand's own
- * colour, and the wordmark set beneath it — the anatomy a real logo row has.
+ * Partner logotypes. Real marks aren't available, so this sets the brand's full
+ * name as a wordmark in its own colour.
+ *
+ * The first attempt kept v1's tile shape and put a two-letter monogram in it,
+ * which was worse on both counts: "AM" and "BI" are less legible than "AMC" and
+ * "BizzyCar", and the tile sat directly above a label repeating the same name.
+ * A wordmark carries the identity and the label in one object, which is what a
+ * real logo row does.
  */
 export function BrandMark({
   name,
   color,
-  size = 34,
+  active = false,
 }: {
   name: string;
   color: string;
-  size?: number;
+  active?: boolean;
 }) {
-  const mono = name.replace(/[^A-Za-z]/g, "").slice(0, 2).toUpperCase();
   return (
     <span
-      className="flex shrink-0 items-center justify-center rounded-[10px] font-extrabold tracking-[-0.04em] text-white"
+      className={`flex shrink-0 items-center gap-[7px] rounded-full py-[8px] pl-[9px] pr-[14px] text-[13px] font-extrabold tracking-[-0.02em] transition-colors ${
+        active ? "text-white" : "text-r-ink-2"
+      }`}
       style={{
-        width: size,
-        height: size,
-        background: color,
-        fontSize: size * 0.38,
-        boxShadow: `0 2px 8px -2px ${color}80`,
+        background: active ? color : "var(--color-r-sunk)",
+        boxShadow: active ? `0 3px 12px -3px ${color}99` : undefined,
       }}
-      aria-hidden="true"
     >
-      {mono}
+      <span
+        className="h-[16px] w-[16px] shrink-0 rounded-[5px]"
+        style={{ background: active ? "rgba(255,255,255,0.9)" : color }}
+      />
+      {name}
     </span>
   );
 }

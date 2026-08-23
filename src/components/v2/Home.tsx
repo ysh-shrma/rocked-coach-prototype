@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
+  ArrowRight,
   Award,
   Bell,
   Brain,
@@ -12,13 +13,14 @@ import {
   FolderOpen,
   House,
   MessageCircleQuestion,
-  PlayCircle,
+  Play,
   Search,
   Trophy,
   Users,
 } from "lucide-react";
 import { CONTENT_TABS } from "@/data/content";
 import type { PerformanceSummary } from "@/lib/session";
+import { BrandMark, RocketMark } from "./art";
 import { PillarBars, Sheet, rise } from "./ui";
 
 const TABS = [
@@ -82,8 +84,12 @@ export function Home({
   return (
     <div className="relative flex h-full flex-col bg-white">
       <motion.div className="flex items-center justify-between px-5 pb-3 pt-5" {...rise(0)}>
-        <span className="flex items-center gap-2 rounded-full bg-r-sunk px-3 py-[7px] text-[13px] font-semibold text-r-ink-2">
-          <Flame size={15} className="text-r-amber" fill="currentColor" strokeWidth={0} />
+        {/* The real app puts the flame in a filled gold disc, which is what
+            makes it read as a reward rather than a status line. */}
+        <span className="flex items-center gap-[9px] rounded-full bg-r-sunk py-[5px] pl-[5px] pr-4 text-meta font-bold text-r-ink-2">
+          <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-r-gold">
+            <Flame size={14} className="text-white" fill="currentColor" strokeWidth={0} />
+          </span>
           0 of 1 day streak
         </span>
         <span className="flex items-center gap-3 text-r-ink-2">
@@ -100,10 +106,10 @@ export function Home({
           <div className="p-4">
             {performance.state === "empty" ? (
               <>
-                <p className="mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+                <p className="mono text-micro uppercase text-r-ink-4">
                   Your standing
                 </p>
-                <p className="mt-2 text-[13.5px] leading-relaxed text-r-ink-2">
+                <p className="mt-2 text-body text-r-ink-2">
                   You haven&rsquo;t practiced yet — your first call becomes your starting line.
                 </p>
               </>
@@ -111,17 +117,17 @@ export function Home({
               <>
                 <div className="flex items-end justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="mono text-[10.5px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+                    <p className="mono text-micro uppercase text-r-ink-4">
                       {performance.headlineLabel}
                     </p>
-                    <p className="mt-[2px] text-[28px] font-extrabold leading-none tracking-[-0.01em] text-r-ink">
+                    <p className="mt-[2px] text-display-xl text-r-ink">
                       {performance.headlineValue}
                     </p>
                   </div>
                   {performance.avgPillars && <PillarBars values={performance.avgPillars} />}
                 </div>
                 {performance.gapLabel && (
-                  <p className="mt-3 text-[13px] font-semibold text-r-ink-2">{performance.gapLabel}</p>
+                  <p className="mt-3 text-meta font-semibold text-r-ink-2">{performance.gapLabel}</p>
                 )}
               </>
             )}
@@ -133,26 +139,31 @@ export function Home({
             </button>
           </div>
 
-          <div className="h-px bg-r-line" />
-
+          {/* The hero. This is the one thing the screen exists to get the rep
+              to do, and v1 rendered it as a 15px bold line in a white sub-row —
+              quieter than the content carousel below it. On RockED's signature
+              dark surface at display type it now outranks everything else on
+              the screen, which is what the demo is about. */}
           <motion.button
             onClick={onOpenCoach}
-            whileTap={{ scale: 0.98 }}
-            className="flex w-full items-start gap-4 p-4 text-left"
+            whileTap={{ scale: 0.985 }}
+            className="hero-dark block w-full p-5 text-left text-white"
           >
-            <span className="flex h-[46px] w-[46px] shrink-0 items-center justify-center rounded-full bg-r-brand-tint text-r-brand">
-              <Brain size={20} strokeWidth={2.2} />
+            <span className="flex items-center gap-2">
+              <span className="flex h-[26px] w-[26px] items-center justify-center rounded-full bg-white text-r-brand">
+                <RocketMark size={16} strokeWidth={2.1} />
+              </span>
+              <span className="mono text-micro uppercase text-white/70">Next up</span>
             </span>
-            <span className="min-w-0 flex-1">
-              <span className="mono block text-[10.5px] font-semibold uppercase tracking-[0.08em] text-r-brand">
-                Next up
-              </span>
-              <span className="mt-[2px] block text-[15px] font-bold leading-snug text-r-ink">
-                {nextLabel ?? "Start your first practice call"}
-              </span>
-              {nextReason && (
-                <span className="mt-[6px] block text-[12px] leading-snug text-r-ink-3">{nextReason}</span>
-              )}
+            <span className="mt-3 block text-title text-white">
+              {nextLabel ?? "Start your first practice call"}
+            </span>
+            {nextReason && (
+              <span className="mt-2 block text-meta text-white/60">{nextReason}</span>
+            )}
+            <span className="mt-4 inline-flex items-center gap-[7px] rounded-full bg-white px-4 py-[9px] text-[13.5px] font-bold text-r-ink">
+              Start practice call
+              <ArrowRight size={14} strokeWidth={2.6} />
             </span>
           </motion.button>
         </motion.div>
@@ -161,28 +172,13 @@ export function Home({
             tab-filtered by brand/vendor), replacing Browse by Brands: same
             tab-strip pattern, but with an actual destination per item
             instead of decorative icons that went nowhere. */}
-        <motion.p className="mb-2 mt-6 text-[13px] font-bold text-r-ink" {...rise(0.1)}>
+        <motion.p className="mb-3 mt-7 text-title text-r-ink" {...rise(0.1)}>
           Content Library
         </motion.p>
         <motion.div className="flex gap-2 overflow-x-auto pb-1" {...rise(0.12)}>
           {CONTENT_TABS.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex shrink-0 flex-col items-center gap-1.5 rounded-[14px] border p-2.5 ${
-                tab.id === activeTab ? "border-r-brand-line bg-r-brand-tint" : "border-r-line bg-white"
-              }`}
-              style={{ minWidth: 74 }}
-            >
-              <span
-                className="flex h-[30px] w-[30px] items-center justify-center rounded-[9px] text-[11px] font-bold text-white"
-                style={{ background: tab.color }}
-              >
-                {tab.name[0]}
-              </span>
-              <span className={`text-[10px] font-medium leading-tight ${tab.id === activeTab ? "text-r-brand" : "text-r-ink-3"}`}>
-                {tab.name}
-              </span>
+            <button key={tab.id} onClick={() => setActiveTab(tab.id)} className="shrink-0">
+              <BrandMark name={tab.name} color={tab.color} active={tab.id === activeTab} />
             </button>
           ))}
         </motion.div>
@@ -191,17 +187,19 @@ export function Home({
           {activeContent.videos.map((video) => (
             <div
               key={video.id}
-              className="flex w-[168px] shrink-0 flex-col overflow-hidden rounded-[18px] bg-gradient-to-b from-[#2b1f6b] to-[#16151f] text-white"
+              className="hero-dark flex w-[168px] shrink-0 flex-col overflow-hidden rounded-[18px] text-white"
             >
               <div className="relative flex h-[140px] items-center justify-center">
                 <span className="absolute left-2 top-2 rounded-full bg-black/40 px-2 py-[2px] text-[10px] font-semibold">
                   {video.progressPct}%
                 </span>
-                <PlayCircle size={30} strokeWidth={1.6} className="text-white/70" />
+                <span className="flex h-[42px] w-[42px] items-center justify-center rounded-full bg-white/15 backdrop-blur-sm">
+                  <Play size={16} strokeWidth={2.4} className="ml-[2px] text-white" fill="currentColor" />
+                </span>
               </div>
               <div className="flex flex-1 flex-col gap-1 p-3">
-                <span className="text-[10px] font-bold uppercase tracking-wide text-amber-300">Guide</span>
-                <span className="text-[12.5px] font-bold leading-snug">{video.chapterLabel}</span>
+                <span className="mono text-micro uppercase text-r-gold">Guide</span>
+                <span className="text-[13.5px] font-bold leading-snug">{video.chapterLabel}</span>
                 <span className="mt-1 rounded-full bg-white/15 px-2.5 py-1 text-center text-[11px] font-semibold">
                   Start Now
                 </span>
