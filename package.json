@@ -6,7 +6,8 @@
     "dev": "next dev -p 3012",
     "build": "next build",
     "start": "next start -p 3012",
-    "lint": "eslint"
+    "lint": "eslint",
+    "lint:design": "node scripts/lint-design.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.38.0",

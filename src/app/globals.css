@@ -94,6 +94,145 @@
   --text-micro--font-weight: 600;
   --text-micro--letter-spacing: 0.09em;
 
+  /* ===============================================================
+     v3 DESIGN SYSTEM
+     ===============================================================
+
+     The nine styles below are the v3 scale, named after Apple's HIG so the
+     intent of each is unambiguous at the call site. They sit ALONGSIDE the six
+     v2 tokens above rather than replacing them: /v2 is frozen and its 25 call
+     sites read those same global tokens, so renaming would silently restyle it.
+     Delete the v2 six when v2 retires.
+
+     Nine, not more. Anything needing a size that isn't here is a sign the
+     hierarchy is wrong, not that the scale is short a step. */
+
+  --text-large-title: 34px;
+  --text-large-title--line-height: 1.06;
+  --text-large-title--font-weight: 800;
+  --text-large-title--letter-spacing: -0.032em;
+
+  --text-title-1: 28px;
+  --text-title-1--line-height: 1.12;
+  --text-title-1--font-weight: 800;
+  --text-title-1--letter-spacing: -0.026em;
+
+  --text-title-2: 22px;
+  --text-title-2--line-height: 1.2;
+  --text-title-2--font-weight: 700;
+  --text-title-2--letter-spacing: -0.02em;
+
+  --text-title-3: 19px;
+  --text-title-3--line-height: 1.26;
+  --text-title-3--font-weight: 700;
+  --text-title-3--letter-spacing: -0.016em;
+
+  --text-headline: 16px;
+  --text-headline--line-height: 1.35;
+  --text-headline--font-weight: 700;
+  --text-headline--letter-spacing: -0.011em;
+
+  --text-callout: 15px;
+  --text-callout--line-height: 1.4;
+  --text-callout--font-weight: 500;
+
+  --text-subhead: 14px;
+  --text-subhead--line-height: 1.42;
+  --text-subhead--font-weight: 500;
+
+  --text-footnote: 12.5px;
+  --text-footnote--line-height: 1.4;
+
+  --text-caption: 11px;
+  --text-caption--line-height: 1.3;
+  --text-caption--font-weight: 600;
+  --text-caption--letter-spacing: 0.075em;
+
+  /* ---- Colour ramps ----
+     v1/v2 carried 17 flat semantic names with ad hoc -tint/-line suffixes,
+     which is why nothing could express "slightly bad" or "deeply bad". Four
+     full ramps plus gold. 500 is the pure hue in every one, so `-500` is
+     always the safe default. */
+
+  --color-brand-50: #f4f0ff;
+  --color-brand-100: #e9e1ff;
+  --color-brand-200: #d3c2fe;
+  --color-brand-300: #b49bfb;
+  --color-brand-400: #8f6ef2;
+  --color-brand-500: #5b3ee6;
+  --color-brand-600: #4c2fd6;
+  --color-brand-700: #3d24ad;
+  --color-brand-800: #2e1b82;
+  --color-brand-900: #1f1259;
+
+  --color-ok-50: #eafaf1;
+  --color-ok-100: #cff3e0;
+  --color-ok-200: #a3e6c4;
+  --color-ok-300: #6bd3a1;
+  --color-ok-400: #35b87c;
+  --color-ok-500: #1c9a5b;
+  --color-ok-600: #157c49;
+  --color-ok-700: #11603a;
+  --color-ok-800: #0d472b;
+  --color-ok-900: #08301d;
+
+  --color-warn-50: #fdf6ea;
+  --color-warn-100: #fbe9cd;
+  --color-warn-200: #f6d29c;
+  --color-warn-300: #efb463;
+  --color-warn-400: #e89a37;
+  --color-warn-500: #e8871e;
+  --color-warn-600: #c76c14;
+  --color-warn-700: #9d5310;
+  --color-warn-800: #743d0c;
+  --color-warn-900: #4e2908;
+
+  --color-bad-50: #fdeeec;
+  --color-bad-100: #fbdad5;
+  --color-bad-200: #f5b3aa;
+  --color-bad-300: #ec8474;
+  --color-bad-400: #dd5b44;
+  --color-bad-500: #c8402a;
+  --color-bad-600: #a83322;
+  --color-bad-700: #85281a;
+  --color-bad-800: #611d13;
+  --color-bad-900: #41130c;
+
+  --color-gold-50: #fdf6e6;
+  --color-gold-100: #fbebc6;
+  --color-gold-300: #f5cf78;
+  --color-gold-500: #f0a92a;
+  --color-gold-700: #a8721a;
+
+  /* ---- Surfaces ----
+     iOS-style elevation by fill rather than by shadow. v2 was white on white
+     separated by one border colour, so nothing signalled grouped vs raised. */
+  --color-surface: #ffffff;
+  --color-surface-grouped: #f6f4fc;
+  --color-surface-grouped-2: #eeebf8;
+  --color-separator: #e7e3f2;
+  --color-separator-strong: #d8d2ec;
+
+  /* ---- Spacing ----
+     Deliberately NOT redefined here. Tailwind's default scale already IS the
+     4pt grid (p-1 = 4px … p-6 = 24px), and it is generated dynamically from a
+     single multiplier — declaring explicit `--spacing-*` keys risks replacing
+     that generator with a fixed set. The codebase uses p-7, which such a set
+     would not have contained, and that would have silently changed layout on
+     the two frozen lanes.
+
+     So the grid is enforced by scripts/lint-design.mjs banning arbitrary
+     `p-[Npx]` values, not by new tokens. v2 carried 72 arbitrary values, 65 of
+     them off-grid (1, 2, 3, 5, 6, 7, 9px). */
+
+  /* ---- Radii, four steps, down from eight ad hoc values ----
+     Safe to define: only bare `rounded`, `rounded-full` and the corner variants
+     are used anywhere, none of which read these keys. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
   /* Three elevation tiers, replacing v1's single shadow recipe. */
   --shadow-e1: 0 1px 2px rgba(30, 15, 60, 0.04);
   --shadow-e2: 0 1px 2px rgba(30, 15, 60, 0.05), 0 10px 28px -14px rgba(30, 15, 60, 0.18);
