@@ -282,6 +282,11 @@
 }
 
 /* ---- v3 scope ----
+   Note the deliberate mismatch: this class is `.v3` but the route it styles is
+   `/prototype`, and its components live in `components/v3/`. The routes were
+   renamed so a reviewer never sees a version number in the URL; the internal
+   scope kept its name because renaming it means touching every component and
+   every token block for zero reader-visible gain. Not an oversight.
    Deliberately duplicated from .v2 above rather than written as a shared
    `.v2, .v3` selector. /v2 is frozen, and a shared selector would mean every
    later v3 change to the hero surface silently restyles it. The duplication

@@ -187,7 +187,7 @@ export default function RepApp() {
         Demo: {crmIntegrated ? "CRM integrated" : "Not integrated"}
       </button>
       <a
-        href="/v3/manager"
+        href="/prototype/manager"
         className="fixed right-5 top-5 z-30 rounded-full bg-r-ink px-4 py-2 text-[12.5px] font-semibold text-white shadow-lg"
       >
         Manager view →

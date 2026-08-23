@@ -48,7 +48,7 @@ export function ManagerShell({ children }: { children: React.ReactNode }) {
           <span className="block text-[14px] font-bold leading-none tracking-[-0.01em]">RockED — Sales Coaching</span>
           <span className="mono block text-[10px] leading-none text-r-ink-4">manager view</span>
         </span>
-        <a href="/v3" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
+        <a href="/prototype" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
           ← Rep app
         </a>
         <span className="mx-1 h-[20px] w-px bg-r-line" />
