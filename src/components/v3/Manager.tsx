@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { capabilityById, type CoachingPillar } from "@/data/personas";
 import { needsCoachingScore, repCoverage, repGaps, type AssignedTraining, type Rep } from "@/data/reps";
-import { CoverageRing, DemoDataTag, Mark, rise, TrendChart } from "./ui";
+import { CoverageRing, DemoDataTag, Mark, cap, rise, TrendChart } from "./ui";
 
 const COACHING_LABELS: Record<CoachingPillar, string> = {
   rapport: "Rapport & Trust",
@@ -205,7 +205,7 @@ export function RepDetail({
             {rep.flaggedMoments.map((m, i) => (
               <div key={i} className="card-lift p-3">
                 <p className="text-[12.5px] leading-snug text-r-ink-2">
-                  <span className="font-semibold text-r-ink">Practiced</span> {capabilityById(m.capabilityId)?.label ?? m.personaName}, {m.date}
+                  <span className="font-semibold text-r-ink">Practiced</span> {(() => { const c = capabilityById(m.capabilityId); return c ? cap(c) : m.personaName; })()}, {m.date}
                   {" → "}
                   <span className="font-semibold text-r-ink">Real call</span>, {m.realDate}: {m.realOutcome}
                 </p>

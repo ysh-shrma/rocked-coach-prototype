@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, Plus, Sparkles } from "lucide-react";
 import { capabilityForPersona, type Persona } from "@/data/personas";
 import type { SessionResult } from "@/lib/session";
-import { Btn, PersonaAvatar, rise, Sheet } from "./ui";
+import { Btn, PersonaAvatar, blurb, cap, rise, Sheet } from "./ui";
 
 export function Hub({
   personas,
@@ -66,7 +66,7 @@ export function Hub({
               <PersonaAvatar name={nextPersona.name} size={48} />
               <span className="min-w-0 flex-1">
                 <span className="block text-[15.5px] font-bold text-r-ink">{nextPersona.name}</span>
-                <span className="mt-[2px] block text-[12.5px] leading-snug text-r-ink-3">{nextPersona.blurb}</span>
+                <span className="mt-[2px] block text-[12.5px] leading-snug text-r-ink-3">{blurb(nextPersona)}</span>
                 {nextReason && (
                   <span className="mt-[6px] block text-[11.5px] leading-snug text-r-ink-4">{nextReason}</span>
                 )}
@@ -179,7 +179,7 @@ function JourneyNode({
           {persona.name}
         </span>
         {capability && (
-          <span className="mt-[2px] block text-[12px] leading-snug text-r-ink-3">{capability.label}</span>
+          <span className="mt-[2px] block text-[12px] leading-snug text-r-ink-3">{cap(capability)}</span>
         )}
         {done && (
           <span

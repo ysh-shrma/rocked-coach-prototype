@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import { capabilityById, type CoachingPillar, type Persona } from "@/data/personas";
 import { currentRep } from "@/data/reps";
 import { COACHING_PILLAR_LABELS, summarizePerformance, type SessionResult } from "@/lib/session";
-import { DemoDataTag, RoadmapTag, TrendChart, rise } from "./ui";
+import { DemoDataTag, RoadmapTag, TrendChart, cap, rise } from "./ui";
 
 export function Profile({
   personas,
@@ -60,7 +60,7 @@ export function Profile({
                   {seedIsProvisional && <RoadmapTag>Starting point, not earned yet</RoadmapTag>}
                   <p className="mt-2 text-[13.5px] leading-relaxed text-r-ink-2">
                     Based on your setup tag, we're starting you on{" "}
-                    <span className="font-semibold text-r-ink">{nextCap.label}</span>. This updates the moment
+                    <span className="font-semibold text-r-ink">{cap(nextCap)}</span>. This updates the moment
                     you complete a real session.
                   </p>
                 </>
@@ -141,7 +141,7 @@ export function Profile({
               <div key={i} className="card-lift p-3.5">
                 <p className="text-[12.5px] leading-relaxed text-r-ink-2">
                   <span className="font-semibold text-r-ink">Practiced</span>{" "}
-                  {capabilityById(m.capabilityId)?.label ?? m.personaName}, {m.date}
+                  {(() => { const c = capabilityById(m.capabilityId); return c ? cap(c) : m.personaName; })()}, {m.date}
                   {" → "}
                   <span className="font-semibold text-r-ink">Real call</span>, {m.realDate}: {m.realOutcome}
                 </p>

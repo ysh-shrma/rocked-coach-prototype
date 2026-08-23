@@ -79,7 +79,19 @@ export type Persona = {
   id: string;
   name: string;
   blurb: string;
+  /** v3 only. 3–5 words, for the line under a persona's name on a board. */
+  blurbShort?: string;
   objective: string;
+  /**
+   * v3 only. One clause.
+   *
+   * The long `objective` runs two sentences averaging 14.5 words and is
+   * PreCall's main content — 88% of that screen's words sat inside full
+   * sentences, the worst ratio in the app. The rep needs one thing to hold in
+   * their head while the call starts; the second sentence is the explanation,
+   * and it belongs behind a tap.
+   */
+  objectiveShort?: string;
   capabilityId: string;
   startNode: string;
   nodes: Record<string, DialogueNode>;
@@ -92,18 +104,29 @@ export type Persona = {
 export type Capability = {
   id: string;
   label: string;
+  /**
+   * v3 only. 2–4 words, for use as a list-item label.
+   *
+   * The long `label` is a full clause averaging 8.4 words (the longest runs 12),
+   * and Hub renders eight of them stacked. Measured on the rendered screen, 65%
+   * of Hub's words sat inside full sentences — a rep has to read a paragraph to
+   * learn which capabilities they've proven, which is information a short label
+   * plus a count conveys instantly. The clause survives as the expanded
+   * description; it just stops being the label.
+   */
+  labelShort?: string;
   personaId: string;
 };
 
 export const capabilities: Capability[] = [
-  { id: "hold-price", label: "Holding price without caving to a discount request", personaId: "price-haggler" },
-  { id: "recover-defect", label: "Recovering honestly after disclosing a defect or recall", personaId: "burned-customer" },
-  { id: "deescalate", label: "De-escalating a rude or combative customer without losing the deal", personaId: "difficult-one" },
-  { id: "close-next-step", label: "Closing with an actual next step locked in", personaId: "first-timer" },
-  { id: "upsell-without-pushy", label: "Upselling or cross-selling without turning pushy", personaId: "online-researcher" },
-  { id: "comparison-reason", label: "Giving a comparison-shopper a real reason to decide today", personaId: "comparison-shopper" },
-  { id: "trade-in-fair", label: "Negotiating a trade-in fairly without over-promising", personaId: "trade-in-buyer" },
-  { id: "honest-under-urgency", label: "Staying honest under a fake-urgency moment instead of matching it with pressure", personaId: "budget-boxed" },
+  { id: "hold-price", label: "Holding price without caving to a discount request", labelShort: "Hold the price", personaId: "price-haggler" },
+  { id: "recover-defect", label: "Recovering honestly after disclosing a defect or recall", labelShort: "Disclose first", personaId: "burned-customer" },
+  { id: "deescalate", label: "De-escalating a rude or combative customer without losing the deal", labelShort: "Keep composure", personaId: "difficult-one" },
+  { id: "close-next-step", label: "Closing with an actual next step locked in", labelShort: "Lock the next step", personaId: "first-timer" },
+  { id: "upsell-without-pushy", label: "Upselling or cross-selling without turning pushy", labelShort: "Upsell cleanly", personaId: "online-researcher" },
+  { id: "comparison-reason", label: "Giving a comparison-shopper a real reason to decide today", labelShort: "Give a reason today", personaId: "comparison-shopper" },
+  { id: "trade-in-fair", label: "Negotiating a trade-in fairly without over-promising", labelShort: "Value the trade", personaId: "trade-in-buyer" },
+  { id: "honest-under-urgency", label: "Staying honest under a fake-urgency moment instead of matching it with pressure", labelShort: "Don't match pressure", personaId: "budget-boxed" },
 ];
 
 export const personas: Persona[] = [
@@ -111,7 +134,9 @@ export const personas: Persona[] = [
     id: "price-haggler",
     name: "The Price Haggler",
     blurb: "Treats every number as a starting point to negotiate down.",
+    blurbShort: "Negotiates every number",
     objective: "Hold the real price. She already knows the real number — never give her a different one.",
+    objectiveShort: "Hold the real price.",
     capabilityId: "hold-price",
     closingLine: "Okay. I'll see what my bank says and call you back.",
     startNode: "n0",
@@ -187,7 +212,9 @@ export const personas: Persona[] = [
     id: "burned-customer",
     name: "The Burned Customer",
     blurb: "Bad experience before, guarded, testing if you're different.",
+    blurbShort: "Guarded, burned before",
     objective: "Disclose honestly before she has to catch you. A recovery only works if it comes first.",
+    objectiveShort: "Disclose before she catches you.",
     capabilityId: "recover-defect",
     closingLine: "Alright — text me when it's fixed and we'll talk.",
     startNode: "n0",
@@ -272,7 +299,9 @@ export const personas: Persona[] = [
     id: "difficult-one",
     name: "The Difficult One",
     blurb: "Combative or dismissive; tests composure, not sales technique.",
+    blurbShort: "Combative. Tests composure",
     objective: "Match his pace, not his temperature. Composure is the whole test.",
+    objectiveShort: "Match his pace, not his temperature.",
     capabilityId: "deescalate",
     closingLine: "Fine. Let's do the test drive, twenty minutes, like I said.",
     startNode: "n0",
@@ -368,7 +397,9 @@ export const personas: Persona[] = [
     id: "first-timer",
     name: "The Friendly First-Timer",
     blurb: "Nervous, hasn't bought in years, needs reassurance more than a pitch.",
+    blurbShort: "Nervous. Needs reassurance",
     objective: "Give her a concrete next step. Vague reassurance isn't the same as an answer.",
+    objectiveShort: "Give her a concrete next step.",
     capabilityId: "close-next-step",
     closingLine: "Okay... I think I'll head home and think about it, but thank you.",
     startNode: "n0",
@@ -455,7 +486,9 @@ export const personas: Persona[] = [
     id: "online-researcher",
     name: "The Online Researcher",
     blurb: "Already knows specs and price, wants respect, not a script.",
+    blurbShort: "Knows the specs already",
     objective: "Recommend only what's actually relevant. One good add-on beats five pitched ones.",
+    objectiveShort: "Only recommend what's relevant.",
     capabilityId: "upsell-without-pushy",
     closingLine: "Okay. I'll take a look and get back to you.",
     startNode: "n0",
@@ -542,7 +575,9 @@ export const personas: Persona[] = [
     id: "budget-boxed",
     name: "The Budget-Boxed Buyer",
     blurb: "Has a hard ceiling, needs a creative option inside it.",
+    blurbShort: "Hard ceiling on price",
     objective: "Stay inside her number, and don't invent urgency to move her off it.",
+    objectiveShort: "Stay inside her number.",
     capabilityId: "honest-under-urgency",
     closingLine: "Okay. I appreciate you being straight with me about all this.",
     startNode: "n0",
@@ -628,7 +663,9 @@ export const personas: Persona[] = [
     id: "comparison-shopper",
     name: "The Comparison Shopper",
     blurb: "Cross-shopping other stores, needs a real reason to decide today.",
+    blurbShort: "Cross-shopping other stores",
     objective: "Give her a real, specific reason to decide today — not a fabricated deadline.",
+    objectiveShort: "Give a real reason to decide today.",
     capabilityId: "comparison-reason",
     closingLine: "Okay — I'll let you know what I decide either way.",
     startNode: "n0",
@@ -715,7 +752,9 @@ export const personas: Persona[] = [
     id: "trade-in-buyer",
     name: "The Trade-In-Focused Buyer",
     blurb: "The deal hinges on what their trade is worth.",
+    blurbShort: "It hinges on the trade",
     objective: "Give a real range up front, then explain the appraisal honestly — don't overpromise a number.",
+    objectiveShort: "Give a real range up front.",
     capabilityId: "trade-in-fair",
     closingLine: "Alright — let me think about the numbers and I'll call you.",
     startNode: "n0",

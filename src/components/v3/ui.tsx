@@ -24,6 +24,19 @@ export const say = (n: { customerLineShort?: string; customerLine: string }) =>
   n.customerLineShort ?? n.customerLine;
 export const line = (c: { textShort?: string; text: string }) => c.textShort ?? c.text;
 
+/**
+ * The same fallback pattern for interface copy, added in v3.
+ *
+ * The dialogue accessors above shortened what the *simulation* says. These
+ * shorten what the *interface* says — the separate problem that Hub rendered 65%
+ * of its words inside full sentences and PreCall 88%, because a capability label
+ * and a call objective were both written as prose.
+ */
+export const cap = (c: { labelShort?: string; label: string }) => c.labelShort ?? c.label;
+export const blurb = (p: { blurbShort?: string; blurb: string }) => p.blurbShort ?? p.blurb;
+export const objective = (p: { objectiveShort?: string; objective: string }) =>
+  p.objectiveShort ?? p.objective;
+
 export const ease = [0.16, 1, 0.3, 1] as const;
 export const rise = (delay = 0) => ({
   initial: { opacity: 0, y: 12 },
