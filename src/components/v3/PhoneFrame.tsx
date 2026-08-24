@@ -20,24 +20,27 @@
 const FRAME_WIDTH = 402;
 const FRAME_HEIGHT = 874;
 
+// The frame is only the device. Page background and centering belong to the
+// page — this used to own a `h-screen w-full bg-[#e9e6f4]` wrapper, which was
+// invisible on the full-page routes (they each render their own identical one)
+// but on /tour, where the frame sits in a sticky column, became a square-
+// cornered 402x100vh block showing through behind the 52px corners.
 export function PhoneFrame({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-[#e9e6f4]">
-      <div
-        className="relative flex shrink-0 flex-col overflow-hidden"
-        style={{
-          width: FRAME_WIDTH,
-          height: FRAME_HEIGHT,
-          borderRadius: 52,
-          boxShadow: "0 48px 90px -20px rgba(8,10,18,0.35), 0 12px 30px -12px rgba(8,10,18,0.25)",
-          background: dark ? "#0a0a10" : "#ffffff",
-        }}
-      >
-        <StatusBar dark={dark} />
-        <DynamicIsland />
-        <div className="relative min-h-0 flex-1 overflow-hidden">{children}</div>
-        <HomeIndicator dark={dark} />
-      </div>
+    <div
+      className="relative flex shrink-0 flex-col overflow-hidden"
+      style={{
+        width: FRAME_WIDTH,
+        height: FRAME_HEIGHT,
+        borderRadius: 52,
+        boxShadow: "0 48px 90px -20px rgba(8,10,18,0.35), 0 12px 30px -12px rgba(8,10,18,0.25)",
+        background: dark ? "#0a0a10" : "#ffffff",
+      }}
+    >
+      <StatusBar dark={dark} />
+      <DynamicIsland />
+      <div className="relative min-h-0 flex-1 overflow-hidden">{children}</div>
+      <HomeIndicator dark={dark} />
     </div>
   );
 }

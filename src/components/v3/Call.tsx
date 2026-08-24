@@ -23,7 +23,9 @@ import { GroundTruthTrade, GroundTruthVehicle, PersonaAvatar, Sheet, SentimentBa
 type TranscriptRow = { who: "customer" | "rep"; text: string; nodeId: string };
 
 const deltaSign = (d: Choice["delta"]) => (d.trust ?? 0) + (d.patience ?? 0) + (d.interest ?? 0);
-const PACING_CAVEAT_KEY = "rocked-pacing-caveat-seen";
+// Scoped to v3: the frozen /v1 and /v2 lanes carry the same key unscoped, so
+// opening one of them first used to burn v3's first run.
+const PACING_CAVEAT_KEY = "rocked-pacing-caveat-seen-v3";
 
 /**
  * A call, not a chat log. The prior build stacked every turn as a growing,
@@ -39,6 +41,12 @@ const PACING_CAVEAT_KEY = "rocked-pacing-caveat-seen";
  * a backend-less mock: there's no ASR, so pressing the mic reveals the
  * candidate lines the rep could say next as an unranked bottom sheet, not a
  * "here's what to say" coaching hint. No line is marked best.
+ *
+ * Because the mic is the only way to take a turn, it carries a standing state
+ * caption rather than relying on the glyph to explain itself — reviewers were
+ * reaching this screen and reading it as dead. The caption names *whose turn
+ * it is*, never which line is better, so "no line is marked best" still holds:
+ * nothing inside the choices sheet is ranked, ordered, or marked.
  *
  * Traversal is graph-based (persona.nodes / choice.next) — see personas.ts's
  * file comment for why a flat beat list broke coherence.
@@ -87,6 +95,14 @@ export function Call({
       window.localStorage.setItem(PACING_CAVEAT_KEY, "1");
       return;
     }
+    setSheetOpen(true);
+  }
+
+  /** Every exit from the caveat continues into the choices. Dismissing it via
+   *  the backdrop used to just close it, dropping the reviewer back onto the
+   *  screen they had already failed to read as interactive. */
+  function dismissPacingCaveat() {
+    setShowPacingCaveat(false);
     setSheetOpen(true);
   }
 
@@ -139,6 +155,17 @@ export function Call({
   const ov = overall(sentiment);
   const heroText = repFlash ?? (node ? say(node) : "");
   const heroWho = repFlash ? "rep" : "customer";
+
+  /** The mic is live only between the customer finishing and the rep's line
+   *  echoing back. Without this gate a second tap during the 1300ms advance
+   *  re-opens the SAME node's choices: two deltas land on the meter, two rep
+   *  rows land in the transcript, and traversal follows the second pick. */
+  const canRespond = ending === "none" && !repFlash;
+  const turnCue = !canRespond
+    ? "She’s responding"
+    : picks.length === 0
+      ? "Your turn — tap the mic"
+      : "Your turn";
 
   return (
     <div className="coach-dark flex h-full flex-col">
@@ -242,40 +269,52 @@ export function Call({
 
       <div className="shrink-0 border-t border-d-line p-4">
         {ending === "none" ? (
-          <div className="flex items-center justify-center gap-4">
-            <motion.button
-              onClick={openSheet}
-              whileTap={{ scale: 0.94 }}
-              className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-d-brand text-white shadow-[0_6px_20px_-6px_rgba(143,116,243,0.7)]"
-              aria-label="Respond"
-            >
-              <Mic size={22} strokeWidth={2.2} />
-            </motion.button>
-            <button
-              onClick={onExit}
-              className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-white/10 text-white/80"
-              aria-label="End call"
-            >
-              <PhoneOff size={17} strokeWidth={2.2} />
-            </button>
-          </div>
+          <>
+            <p className="mono mb-2 text-center text-caption uppercase text-d-brand" aria-live="polite">
+              {turnCue}
+            </p>
+            {/* The mic is centred on the bar, not on the pair, so the caption
+                above sits over the control it names. */}
+            <div className="relative flex items-center justify-center">
+              <motion.button
+                onClick={openSheet}
+                disabled={!canRespond}
+                whileTap={canRespond ? { scale: 0.94 } : undefined}
+                whileHover={canRespond ? { scale: 1.06 } : undefined}
+                className="relative flex h-[56px] w-[56px] cursor-pointer items-center justify-center rounded-full bg-d-brand text-white shadow-[0_6px_20px_-6px_rgba(143,116,243,0.7)] transition-opacity disabled:cursor-default disabled:opacity-45"
+                aria-label="Respond — choose what you say next"
+              >
+                {canRespond && picks.length === 0 && (
+                  <span
+                    aria-hidden
+                    className="ring-invite pointer-events-none absolute inset-0 rounded-full border-2 border-d-brand"
+                  />
+                )}
+                <Mic size={22} strokeWidth={2.2} />
+              </motion.button>
+              <button
+                onClick={onExit}
+                className="absolute right-0 top-1/2 flex h-[44px] w-[44px] -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/10 text-white/80"
+                aria-label="End call"
+              >
+                <PhoneOff size={17} strokeWidth={2.2} />
+              </button>
+            </div>
+          </>
         ) : (
           <p className="text-center text-[12.5px] text-d-ink-3">Ending call&hellip;</p>
         )}
       </div>
 
-      <Sheet open={showPacingCaveat} onClose={() => setShowPacingCaveat(false)} dark>
+      <Sheet open={showPacingCaveat} onClose={dismissPacingCaveat} dark>
         <p className="text-[15px] font-bold text-d-ink">Heads up, before your first call</p>
         <p className="mt-2 text-[13.5px] leading-relaxed text-d-ink-2">
           Real conversations don&rsquo;t wait while you think. This mock can&rsquo;t fully simulate
           that pacing pressure yet — a real (voice-latency-aware) build would need to.
         </p>
         <button
-          onClick={() => {
-            setShowPacingCaveat(false);
-            setSheetOpen(true);
-          }}
-          className="mt-4 w-full rounded-full bg-d-brand py-3 text-[14px] font-semibold text-white"
+          onClick={dismissPacingCaveat}
+          className="mt-4 w-full cursor-pointer rounded-full bg-d-brand py-3 text-[14px] font-semibold text-white"
         >
           Got it
         </button>
@@ -292,7 +331,7 @@ export function Call({
                 <button
                   key={c.id}
                   onClick={() => pick(c)}
-                  className="rounded-[14px] border border-white/10 bg-white/[0.04] p-3.5 text-left text-[14px] leading-snug text-d-ink transition-colors hover:border-d-brand hover:bg-white/[0.08]"
+                  className="cursor-pointer rounded-[14px] border border-white/10 bg-white/[0.04] p-3.5 text-left text-[14px] leading-snug text-d-ink transition-colors hover:border-d-brand hover:bg-white/[0.08]"
                 >
                   {line(c)}
                 </button>

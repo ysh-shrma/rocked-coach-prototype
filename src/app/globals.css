@@ -233,6 +233,53 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
 
+  /* ---------------------------------------------------------------
+     Submission pages (`/` and `/tour`) — the `.doc` scope.
+
+     A separate scale from the product's, because a document is read at
+     arm's length and an app is read at a glance: body copy here is 17px,
+     not 15px, and the hero is set as a headline rather than as UI.
+     --------------------------------------------------------------- */
+  --font-bricolage-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+
+  /* Capped at 44 rather than 52: a hero has to coexist with the transcript
+     object above it inside one 900px-tall laptop screen. */
+  --text-doc-hero: clamp(32px, 4vw, 44px);
+  --text-doc-hero--line-height: 1.08;
+  --text-doc-hero--font-weight: 700;
+  --text-doc-hero--letter-spacing: -0.03em;
+
+  --text-doc-h2: clamp(23px, 2.6vw, 30px);
+  --text-doc-h2--line-height: 1.18;
+  --text-doc-h2--font-weight: 700;
+  --text-doc-h2--letter-spacing: -0.022em;
+
+  --text-doc-h3: 19px;
+  --text-doc-h3--line-height: 1.3;
+  --text-doc-h3--font-weight: 700;
+  --text-doc-h3--letter-spacing: -0.014em;
+
+  --text-doc-body: 17px;
+  --text-doc-body--line-height: 1.62;
+
+  --text-doc-small: 14px;
+  --text-doc-small--line-height: 1.5;
+
+  --text-doc-mono: 13.5px;
+  --text-doc-mono--line-height: 1.58;
+
+  --text-doc-label: 11.5px;
+  --text-doc-label--line-height: 1.3;
+  --text-doc-label--font-weight: 600;
+  --text-doc-label--letter-spacing: 0.1em;
+
+  /* Paper and ink. No cream, no third accent — RockED's purple is the only
+     colour on these pages and it means one thing: see the .doc block below. */
+  --color-paper: #ffffff;
+  --color-paper-2: #f7f6fa;
+  --color-rule: #e6e4ee;
+  --color-rule-2: #f0eef5;
+
   /* Three elevation tiers, replacing v1's single shadow recipe. */
   --shadow-e1: 0 1px 2px rgba(30, 15, 60, 0.04);
   --shadow-e2: 0 1px 2px rgba(30, 15, 60, 0.05), 0 10px 28px -14px rgba(30, 15, 60, 0.18);
@@ -319,6 +366,73 @@
   position: relative;
 }
 
+/* ---- .doc scope: the submission pages ----
+
+   The one colour rule, and it is the whole visual logic of these pages:
+   PURPLE MEANS ROCKED'S. Their quotes, their screenshots, links into their
+   product. Everything written in the candidate's own voice is ink on paper. If
+   purple ever appears in his own voice the rule stops carrying meaning, so the
+   verification step for these pages is a purple audit, not a colour-contrast
+   pass.
+
+   Boldness is spent in one place — the transcript object at the top. Everything
+   around it is deliberately quiet. */
+.doc {
+  background: var(--color-paper);
+  color: var(--color-r-ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.doc .display {
+  font-family: var(--font-bricolage-sans);
+}
+
+.doc .mono {
+  font-family: var(--font-plex);
+  font-feature-settings: "zero" 1;
+}
+
+/* The signature: a transcript where the finding is marked by absence. Where the
+   customer's reaction should be there is a hairline and two words, not a red
+   warning — on a page this dense with evidence, silence reads louder, and it
+   holds the tone at "here is the gap" rather than "here is your bug". */
+.doc .tape {
+  border-left: 2px solid var(--color-r-brand);
+}
+
+/* The tour's phone column.
+   The frame is a real 402x874, and on a 900-1000px-tall laptop that plus the
+   header and padding overflows — the mic controls got clipped. Scaled down for
+   display rather than resized: the app inside still lays out at 402px, so the
+   prototype renders exactly as it does on a device. Shrinking the frame's
+   logical width would reflow the product and defeat the point of showing a
+   mobile app; scaling the rendered result does not. */
+@media (max-height: 1010px) {
+  .tour-phone {
+    transform: scale(0.84);
+    transform-origin: top center;
+    margin-bottom: -140px;
+  }
+}
+@media (max-height: 880px) {
+  .tour-phone {
+    transform: scale(0.72);
+    margin-bottom: -245px;
+  }
+}
+
+.doc .absent {
+  position: relative;
+}
+.doc .absent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px dashed var(--color-rule);
+}
+
 html {
   -webkit-font-smoothing: antialiased;
 }
@@ -388,6 +502,22 @@ body {
 }
 .pulse-live {
   animation: pulse-live 1.6s ease-in-out infinite;
+}
+
+/* The call screen's mic invite, shown until the rep's first turn and never
+   again. A bare purple circle on a black screen reads as a status light rather
+   than a control — reviewers reached the call and concluded it was dead.
+   A CSS keyframe rather than a framer-motion loop on purpose: the
+   prefers-reduced-motion block at the end of this file zeroes it for free,
+   which framer-motion would not honour. Capped at 1.6 so the ring stays inside
+   the control bar's 56+32px box instead of crossing its top border.
+   Not `pulse-live` — that shrinks and fades, built for a status LED. */
+@keyframes ring-invite {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(1.6); opacity: 0; }
+}
+.ring-invite {
+  animation: ring-invite 1.9s ease-out infinite;
 }
 
 @keyframes shake-bad {
