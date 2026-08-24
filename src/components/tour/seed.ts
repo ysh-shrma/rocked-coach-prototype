@@ -13,7 +13,7 @@ import {
 /**
  * Deterministic session seeding for the walkthrough.
  *
- * Two of the five beats sit on screens that only exist after a call has been
+ * Two of the five changes sit on screens that only exist after a call has been
  * played — the live call mid-conversation, and the report. The tour can't ask a
  * reviewer to play three turns to reach them, and faking the state would mean
  * the annotation described something the engine didn't actually produce.

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { BEATS } from "@/components/tour/beats";
+import { CHANGES } from "@/components/tour/changes";
 import { seedSession } from "@/components/tour/seed";
 import { PhoneFrame } from "@/components/v3/PhoneFrame";
 import { Home } from "@/components/v3/Home";
@@ -57,18 +57,18 @@ export default function TourPage() {
     restartTimer.current = setTimeout(() => setCallRun((n) => n + 1), 1600);
   }
 
-  const beat = BEATS[i];
+  const change = CHANGES[i];
   const persona = personaById(TOUR_PERSONA) ?? personas[0];
 
   // A real engine output, reached by a fixed path instead of by clicking.
   const seeded = seedSession(TOUR_PERSONA, "pressure");
 
   const atStart = i === 0;
-  const atEnd = i === BEATS.length - 1;
+  const atEnd = i === CHANGES.length - 1;
 
   return (
     <div className="doc min-h-screen bg-paper-2">
-      {/* --- top bar: always an escape hatch, on every beat --- */}
+      {/* --- top bar: always an escape hatch, on every change --- */}
       <header className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-rule bg-paper px-6 py-3 md:px-8">
         <Link
           href="/"
@@ -77,7 +77,7 @@ export default function TourPage() {
           &larr; Back to the write-up
         </Link>
         <span className="mono ml-auto text-doc-label uppercase text-r-ink-4">
-          Beat {i + 1} of {BEATS.length}
+          {i + 1} of {CHANGES.length}
         </span>
         <Link
           href="/prototype"
@@ -92,7 +92,7 @@ export default function TourPage() {
               defeat the point of showing a mobile product. --- */}
       <div className="mx-auto flex max-w-[1400px] flex-col items-start gap-8 px-6 py-6 min-[1100px]:flex-row min-[1100px]:gap-14 md:px-8 md:py-8">
         <div className="tour-phone mx-auto shrink-0 min-[1100px]:mx-0 min-[1100px]:sticky min-[1100px]:top-8">
-          {beat.frame === "desktop" ? (
+          {change.frame === "desktop" ? (
             <DesktopFrame>
               <ManagerShell>
                 <TeamList
@@ -108,12 +108,12 @@ export default function TourPage() {
               </ManagerShell>
             </DesktopFrame>
           ) : (
-            <PhoneFrame dark={beat.screen === "call"}>
-              {/* key remounts per beat so each one opens on a clean state of its
-                  screen rather than inheriting the last beat's. */}
-              <div key={`${beat.id}-${callRun}`} className="h-full">
+            <PhoneFrame dark={change.screen === "call"}>
+              {/* key remounts per change so each one opens on a clean state of its
+                  screen rather than inheriting the last change's. */}
+              <div key={`${change.id}-${callRun}`} className="h-full">
                 <Screen
-                  beat={beat}
+                  change={change}
                   persona={persona}
                   seeded={seeded}
                   onCallEnd={handleCallEnd}
@@ -126,54 +126,59 @@ export default function TourPage() {
         <div className="min-w-0 flex-1 pb-16">
           <AnimatePresence mode="wait">
             <motion.div
-              key={beat.id}
+              key={change.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.22 }}
             >
               <p className="mono text-doc-label uppercase text-r-ink-4">
-                Beat {i + 1}
+                {i + 1} / {CHANGES.length}
               </p>
-              <h1 className="display mt-3 text-doc-h2">{beat.title}</h1>
+              <h1 className="display mt-3 text-doc-h2">{change.title}</h1>
 
               <div className="mt-7 border-t border-rule pt-5">
                 <p className="mono text-doc-label uppercase text-r-brand">
                   RockED today
                 </p>
-                <p className="mt-3 text-doc-body text-r-ink-2">{beat.before}</p>
+                <p className="mt-3 text-doc-body text-r-ink-2">{change.before}</p>
               </div>
 
               <div className="mt-6 border-t border-rule pt-5">
                 <p className="mono text-doc-label uppercase text-r-ink-4">
                   In the prototype
                 </p>
-                <p className="mt-3 text-doc-body text-r-ink-2">{beat.after}</p>
+                <p className="mt-3 text-doc-body text-r-ink-2">{change.after}</p>
               </div>
 
               {/* The consequence, not the feature. The feature is already
                   visible in the phone; this is the argument. */}
               <p className="mt-7 border-l-2 border-r-ink pl-5 text-doc-h3">
-                {beat.consequence}
+                {change.consequence}
               </p>
 
-              {/* Only on beats whose phone is genuinely interactive, so the
+              {/* A second argument the screen alone doesn't carry. */}
+              {change.also && (
+                <p className="mt-6 text-doc-body text-r-ink-2">{change.also}</p>
+              )}
+
+              {/* Only on changes whose phone is genuinely interactive, so the
                   invitation is never made where it can't be taken up. */}
-              {beat.tryIt && (
+              {change.tryIt && (
                 <p className="mt-7 text-doc-small text-r-ink-2">
                   <span className="mono mr-[6px] text-doc-label uppercase text-r-brand">
                     try it
                   </span>
-                  {beat.tryIt}
+                  {change.tryIt}
                 </p>
               )}
 
-              {beat.caveat && (
+              {change.caveat && (
                 <p className="mt-7 text-doc-small text-r-ink-3">
                   <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
                     stated limit
                   </span>
-                  {beat.caveat}
+                  {change.caveat}
                 </p>
               )}
             </motion.div>
@@ -198,7 +203,7 @@ export default function TourPage() {
               </Link>
             ) : (
               <button
-                onClick={() => setI((n) => Math.min(BEATS.length - 1, n + 1))}
+                onClick={() => setI((n) => Math.min(CHANGES.length - 1, n + 1))}
                 className="inline-flex items-center gap-2 rounded-full bg-r-ink px-5 py-[10px] text-[15px] font-semibold text-white transition-colors hover:bg-r-ink-2"
               >
                 Next
@@ -206,7 +211,7 @@ export default function TourPage() {
               </button>
             )}
             <span className="mono ml-auto text-doc-label uppercase text-r-ink-4">
-              {BEATS.map((_, n) => (n === i ? "●" : "○")).join(" ")}
+              {CHANGES.map((_, n) => (n === i ? "●" : "○")).join(" ")}
             </span>
           </div>
         </div>
@@ -248,19 +253,19 @@ function DesktopFrame({ children }: { children: React.ReactNode }) {
 
 /** One prototype screen, pinned.
  *
- *  *Navigation* is inert — onExit/onSelect/onBack are noops, so no beat can walk
+ *  *Navigation* is inert — onExit/onSelect/onBack are noops, so no change can walk
  *  itself to another screen and the stepper stays the only thing that moves.
- *  *Within* a beat the screen is the real component and really works: beat 1's
+ *  *Within* a change the screen is the real component and really works: change 1's
  *  call takes turns, moves the meter, and can be lost. (This comment used to
  *  claim all interactions were inert, which sent the next reader past the
  *  interactive path without testing it.) */
 function Screen({
-  beat,
+  change,
   persona,
   seeded,
   onCallEnd,
 }: {
-  beat: (typeof BEATS)[number];
+  change: (typeof CHANGES)[number];
   persona: NonNullable<ReturnType<typeof personaById>>;
   seeded: ReturnType<typeof seedSession>;
   onCallEnd: () => void;
@@ -268,7 +273,7 @@ function Screen({
   const noop = () => {};
   const results = seeded ? { [seeded.personaId]: seeded.result } : {};
 
-  switch (beat.screen) {
+  switch (change.screen) {
     case "call":
       // Not a noop: the tour has no Report to hand off to, so a finished call
       // has to recycle or the phone freezes on "Ending call…" forever.

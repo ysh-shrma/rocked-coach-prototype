@@ -48,8 +48,17 @@ export function ManagerShell({ children }: { children: React.ReactNode }) {
           <span className="block text-[14px] font-bold leading-none tracking-[-0.01em]">RockED — Sales Coaching</span>
           <span className="mono block text-[10px] leading-none text-r-ink-4">manager view</span>
         </span>
-        <a href="/prototype" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
-          ← Rep app
+        {/* Two ways out, because a reviewer who lands here from the rep app
+            shouldn't have to use the browser's back button to reach the
+            write-up. */}
+        <a
+          href="/"
+          className="ml-auto text-[13px] font-medium text-r-ink-3 transition-colors hover:text-r-ink"
+        >
+          ← Back to the write-up
+        </a>
+        <a href="/prototype" className="text-[13px] font-medium text-r-brand hover:underline">
+          Rep app
         </a>
         <span className="mx-1 h-[20px] w-px bg-r-line" />
         <span className="flex items-center gap-2 text-[13px] font-medium text-r-ink-2">

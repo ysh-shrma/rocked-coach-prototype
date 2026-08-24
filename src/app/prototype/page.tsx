@@ -70,12 +70,17 @@ export default function RepApp() {
   // summarizePerformance helper, so the two screens can't drift apart.
   const performance = summarizePerformance(results, rep, crmIntegrated);
 
-  function toggleCrmIntegrated() {
-    setCrmIntegrated((prev) => {
-      const next = !prev;
-      if (next && !hasCompletedAnySession) setPersonalizingPending(true);
-      return next;
-    });
+  /**
+   * Takes the target state rather than flipping, because the control is now two
+   * visible options instead of one toggle. Keeps the original behaviour:
+   * switching *on* with no session yet shows the brief "personalizing from your
+   * dealership's data" pass, since that's the moment the account would actually
+   * pull it. Re-selecting the option you're already on is a no-op.
+   */
+  function selectCrmIntegrated(next: boolean) {
+    if (next === crmIntegrated) return;
+    if (next && !hasCompletedAnySession) setPersonalizingPending(true);
+    setCrmIntegrated(next);
   }
 
   function createCustom(text: string) {
@@ -179,13 +184,52 @@ export default function RepApp() {
 
   return (
     <div className="v3 flex h-screen w-full items-center justify-center bg-[#e9e6f4]">
-      <button
-        onClick={toggleCrmIntegrated}
-        className="fixed left-5 top-5 z-30 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-r-ink shadow-lg"
-      >
-        <span className={`h-[8px] w-[8px] rounded-full ${crmIntegrated ? "bg-emerald-500" : "bg-r-ink-4"}`} />
-        Demo: {crmIntegrated ? "CRM integrated" : "Not integrated"}
-      </button>
+      {/* Presenter layer, outside the phone. CRM connection is a dealership
+          account setting, never something an individual rep is asked — so it
+          can't live inside the simulated app.
+
+          Was a single pill that flipped its own label on click, which meant a
+          reviewer couldn't tell two flows existed until they happened to press
+          it. Both options are now visible at rest, so the control doubles as
+          signage for the two-tier architecture: the product works on practice
+          data alone, and gets better when the dealer's systems are connected. */}
+      <div className="fixed left-5 top-5 z-30 flex flex-col gap-2">
+        <a
+          href="/"
+          className="w-fit rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-r-ink-2 shadow-lg transition-colors hover:text-r-ink"
+        >
+          ← Back to the write-up
+        </a>
+
+        <div className="w-fit rounded-[14px] bg-white p-2 shadow-lg">
+          <p className="mono px-1 pb-[6px] text-[10px] font-semibold uppercase tracking-[0.09em] text-r-ink-4">
+            Dealership data
+          </p>
+          <div className="flex gap-1">
+            {[
+              { on: false, label: "Practice only" },
+              { on: true, label: "CRM + calls connected" },
+            ].map((opt) => {
+              const active = crmIntegrated === opt.on;
+              return (
+                <button
+                  key={opt.label}
+                  onClick={() => selectCrmIntegrated(opt.on)}
+                  aria-pressed={active}
+                  className={`rounded-[10px] px-3 py-[7px] text-[12px] font-semibold transition-colors ${
+                    active
+                      ? "bg-r-brand text-white"
+                      : "text-r-ink-3 hover:bg-r-sunk hover:text-r-ink"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
       <a
         href="/prototype/manager"
         className="fixed right-5 top-5 z-30 rounded-full bg-r-ink px-4 py-2 text-[12.5px] font-semibold text-white shadow-lg"
