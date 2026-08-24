@@ -39,7 +39,7 @@ const NAV = [
  *  language, not just its techniques, is the intentional call. */
 export function ManagerShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen flex-col bg-r-canvas text-r-ink">
+    <div className="v2 flex h-screen flex-col bg-r-canvas text-r-ink">
       <header className="flex h-[56px] shrink-0 items-center gap-3 border-b border-r-line bg-white px-5">
         <span className="flex h-[28px] w-[28px] items-center justify-center rounded-[8px] bg-r-brand text-[13px] font-bold text-white">
           R
@@ -48,7 +48,7 @@ export function ManagerShell({ children }: { children: React.ReactNode }) {
           <span className="block text-[14px] font-bold leading-none tracking-[-0.01em]">RockED — Sales Coaching</span>
           <span className="mono block text-[10px] leading-none text-r-ink-4">manager view</span>
         </span>
-        <a href="/v1" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
+        <a href="/v2" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
           ← Rep app
         </a>
         <span className="mx-1 h-[20px] w-px bg-r-line" />

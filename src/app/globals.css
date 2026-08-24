@@ -49,6 +49,388 @@
   --color-d-brand: #8f74f3;
 
   --font-plex: var(--font-plex-mono), ui-monospace, Menlo, monospace;
+  /* Note the two distinct names, matching the existing --font-plex /
+     --font-plex-mono convention: the theme token may not share a name with the
+     next/font variable it wraps, or it resolves to itself and silently falls
+     back to the system face. */
+  --font-jakarta: var(--font-jakarta-sans), ui-sans-serif, system-ui, sans-serif;
+
+  /* ---------------------------------------------------------------
+     v2 type scale.
+
+     v1 put ~150 of its ~153 font-size declarations between 9.5px and
+     15.5px — a ~1.5x range, which is why every screen read as one flat
+     block of text with nothing to anchor the eye. RockED's own app runs
+     closer to 4x: screen titles land near 40px extrabold
+     (app-screenshot/IMG_1408.PNG, IMG_1397.PNG).
+
+     Six steps, deliberately few, with real jumps between them. Anything
+     that needs a size not on this list is a sign the hierarchy is wrong,
+     not that the scale is missing a step.
+     --------------------------------------------------------------- */
+  --text-display-xl: 40px;
+  --text-display-xl--line-height: 0.95;
+  --text-display-xl--font-weight: 800;
+  --text-display-xl--letter-spacing: -0.035em;
+
+  --text-display: 30px;
+  --text-display--line-height: 1.05;
+  --text-display--font-weight: 800;
+  --text-display--letter-spacing: -0.028em;
+
+  --text-title: 21px;
+  --text-title--line-height: 1.25;
+  --text-title--font-weight: 700;
+  --text-title--letter-spacing: -0.018em;
+
+  --text-body: 15px;
+  --text-body--line-height: 1.45;
+
+  --text-meta: 13px;
+  --text-meta--line-height: 1.4;
+
+  --text-micro: 11px;
+  --text-micro--line-height: 1.3;
+  --text-micro--font-weight: 600;
+  --text-micro--letter-spacing: 0.09em;
+
+  /* ===============================================================
+     v3 DESIGN SYSTEM
+     ===============================================================
+
+     The nine styles below are the v3 scale, named after Apple's HIG so the
+     intent of each is unambiguous at the call site. They sit ALONGSIDE the six
+     v2 tokens above rather than replacing them: /v2 is frozen and its 25 call
+     sites read those same global tokens, so renaming would silently restyle it.
+     Delete the v2 six when v2 retires.
+
+     Nine, not more. Anything needing a size that isn't here is a sign the
+     hierarchy is wrong, not that the scale is short a step. */
+
+  --text-large-title: 34px;
+  --text-large-title--line-height: 1.06;
+  --text-large-title--font-weight: 800;
+  --text-large-title--letter-spacing: -0.032em;
+
+  --text-title-1: 28px;
+  --text-title-1--line-height: 1.12;
+  --text-title-1--font-weight: 800;
+  --text-title-1--letter-spacing: -0.026em;
+
+  --text-title-2: 22px;
+  --text-title-2--line-height: 1.2;
+  --text-title-2--font-weight: 700;
+  --text-title-2--letter-spacing: -0.02em;
+
+  --text-title-3: 19px;
+  --text-title-3--line-height: 1.26;
+  --text-title-3--font-weight: 700;
+  --text-title-3--letter-spacing: -0.016em;
+
+  --text-headline: 16px;
+  --text-headline--line-height: 1.35;
+  --text-headline--font-weight: 700;
+  --text-headline--letter-spacing: -0.011em;
+
+  --text-callout: 15px;
+  --text-callout--line-height: 1.4;
+  --text-callout--font-weight: 500;
+
+  --text-subhead: 14px;
+  --text-subhead--line-height: 1.42;
+  --text-subhead--font-weight: 500;
+
+  --text-footnote: 12.5px;
+  --text-footnote--line-height: 1.4;
+
+  --text-caption: 11px;
+  --text-caption--line-height: 1.3;
+  --text-caption--font-weight: 600;
+  --text-caption--letter-spacing: 0.075em;
+
+  /* ---- Colour ramps ----
+     v1/v2 carried 17 flat semantic names with ad hoc -tint/-line suffixes,
+     which is why nothing could express "slightly bad" or "deeply bad". Four
+     full ramps plus gold. 500 is the pure hue in every one, so `-500` is
+     always the safe default. */
+
+  --color-brand-50: #f4f0ff;
+  --color-brand-100: #e9e1ff;
+  --color-brand-200: #d3c2fe;
+  --color-brand-300: #b49bfb;
+  --color-brand-400: #8f6ef2;
+  --color-brand-500: #5b3ee6;
+  --color-brand-600: #4c2fd6;
+  --color-brand-700: #3d24ad;
+  --color-brand-800: #2e1b82;
+  --color-brand-900: #1f1259;
+
+  --color-ok-50: #eafaf1;
+  --color-ok-100: #cff3e0;
+  --color-ok-200: #a3e6c4;
+  --color-ok-300: #6bd3a1;
+  --color-ok-400: #35b87c;
+  --color-ok-500: #1c9a5b;
+  --color-ok-600: #157c49;
+  --color-ok-700: #11603a;
+  --color-ok-800: #0d472b;
+  --color-ok-900: #08301d;
+
+  --color-warn-50: #fdf6ea;
+  --color-warn-100: #fbe9cd;
+  --color-warn-200: #f6d29c;
+  --color-warn-300: #efb463;
+  --color-warn-400: #e89a37;
+  --color-warn-500: #e8871e;
+  --color-warn-600: #c76c14;
+  --color-warn-700: #9d5310;
+  --color-warn-800: #743d0c;
+  --color-warn-900: #4e2908;
+
+  --color-bad-50: #fdeeec;
+  --color-bad-100: #fbdad5;
+  --color-bad-200: #f5b3aa;
+  --color-bad-300: #ec8474;
+  --color-bad-400: #dd5b44;
+  --color-bad-500: #c8402a;
+  --color-bad-600: #a83322;
+  --color-bad-700: #85281a;
+  --color-bad-800: #611d13;
+  --color-bad-900: #41130c;
+
+  --color-gold-50: #fdf6e6;
+  --color-gold-100: #fbebc6;
+  --color-gold-300: #f5cf78;
+  --color-gold-500: #f0a92a;
+  --color-gold-700: #a8721a;
+
+  /* ---- Surfaces ----
+     iOS-style elevation by fill rather than by shadow. v2 was white on white
+     separated by one border colour, so nothing signalled grouped vs raised. */
+  --color-surface: #ffffff;
+  --color-surface-grouped: #f6f4fc;
+  --color-surface-grouped-2: #eeebf8;
+  --color-separator: #e7e3f2;
+  --color-separator-strong: #d8d2ec;
+
+  /* ---- Spacing ----
+     Deliberately NOT redefined here. Tailwind's default scale already IS the
+     4pt grid (p-1 = 4px … p-6 = 24px), and it is generated dynamically from a
+     single multiplier — declaring explicit `--spacing-*` keys risks replacing
+     that generator with a fixed set. The codebase uses p-7, which such a set
+     would not have contained, and that would have silently changed layout on
+     the two frozen lanes.
+
+     So the grid is enforced by scripts/lint-design.mjs banning arbitrary
+     `p-[Npx]` values, not by new tokens. v2 carried 72 arbitrary values, 65 of
+     them off-grid (1, 2, 3, 5, 6, 7, 9px). */
+
+  /* ---- Radii, four steps, down from eight ad hoc values ----
+     Safe to define: only bare `rounded`, `rounded-full` and the corner variants
+     are used anywhere, none of which read these keys. */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+
+  /* ---------------------------------------------------------------
+     Submission pages (`/` and `/tour`) — the `.doc` scope.
+
+     A separate scale from the product's, because a document is read at
+     arm's length and an app is read at a glance: body copy here is 17px,
+     not 15px, and the hero is set as a headline rather than as UI.
+     --------------------------------------------------------------- */
+  --font-bricolage-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+
+  /* Capped at 44 rather than 52: a hero has to coexist with the transcript
+     object above it inside one 900px-tall laptop screen. */
+  --text-doc-hero: clamp(32px, 4vw, 44px);
+  --text-doc-hero--line-height: 1.08;
+  --text-doc-hero--font-weight: 700;
+  --text-doc-hero--letter-spacing: -0.03em;
+
+  --text-doc-h2: clamp(23px, 2.6vw, 30px);
+  --text-doc-h2--line-height: 1.18;
+  --text-doc-h2--font-weight: 700;
+  --text-doc-h2--letter-spacing: -0.022em;
+
+  --text-doc-h3: 19px;
+  --text-doc-h3--line-height: 1.3;
+  --text-doc-h3--font-weight: 700;
+  --text-doc-h3--letter-spacing: -0.014em;
+
+  --text-doc-body: 17px;
+  --text-doc-body--line-height: 1.62;
+
+  --text-doc-small: 14px;
+  --text-doc-small--line-height: 1.5;
+
+  --text-doc-mono: 13.5px;
+  --text-doc-mono--line-height: 1.58;
+
+  --text-doc-label: 11.5px;
+  --text-doc-label--line-height: 1.3;
+  --text-doc-label--font-weight: 600;
+  --text-doc-label--letter-spacing: 0.1em;
+
+  /* Paper and ink. No cream, no third accent — RockED's purple is the only
+     colour on these pages and it means one thing: see the .doc block below. */
+  --color-paper: #ffffff;
+  --color-paper-2: #f7f6fa;
+  --color-rule: #e6e4ee;
+  --color-rule-2: #f0eef5;
+
+  /* Three elevation tiers, replacing v1's single shadow recipe. */
+  --shadow-e1: 0 1px 2px rgba(30, 15, 60, 0.04);
+  --shadow-e2: 0 1px 2px rgba(30, 15, 60, 0.05), 0 10px 28px -14px rgba(30, 15, 60, 0.18);
+  --shadow-e3: 0 -24px 60px -20px rgba(8, 10, 18, 0.35);
+
+  /* Gold, for points and streaks. RockED's third accent after purple and
+     ink — see the leaderboard's star/point rows. v1 had no equivalent and
+     reached for amber, which already means "assumed/seeded data" here. */
+  --color-r-gold: #f0a92a;
+  --color-r-gold-tint: #fdf3e0;
+}
+
+/* ---- v2 scope ----
+   The only thing this class changes globally is the type face. Every other
+   v2 token above is inert until a v2 component applies its utility, which
+   is what keeps `/` byte-identical while `/v2` diverges. */
+.v2 {
+  font-family: var(--font-jakarta);
+}
+
+/* RockED's signature surface, reproduced from the real app's Challenge and
+   Contests cards (app-screenshot/IMG_1402.PNG, IMG_1408.PNG): near-black base,
+   a purple glow off the top-left, and a faint grid that fades out before it
+   reaches the edges. v1's equivalent was flat `bg-r-sunk` lavender, which is
+   why nothing on the screen read as a hero. */
+.v2 .hero-dark {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(115% 85% at 12% -5%, rgba(126, 90, 255, 0.42), transparent 62%),
+    linear-gradient(168deg, #251b55 0%, #191631 44%, #100f19 100%);
+}
+.v2 .hero-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(95% 75% at 50% 15%, #000 22%, transparent 78%);
+  mask-image: radial-gradient(95% 75% at 50% 15%, #000 22%, transparent 78%);
+}
+.v2 .hero-dark > * {
+  position: relative;
+}
+
+/* ---- v3 scope ----
+   Note the deliberate mismatch: this class is `.v3` but the route it styles is
+   `/prototype`, and its components live in `components/v3/`. The routes were
+   renamed so a reviewer never sees a version number in the URL; the internal
+   scope kept its name because renaming it means touching every component and
+   every token block for zero reader-visible gain. Not an oversight.
+   Deliberately duplicated from .v2 above rather than written as a shared
+   `.v2, .v3` selector. /v2 is frozen, and a shared selector would mean every
+   later v3 change to the hero surface silently restyles it. The duplication
+   costs a few lines now and removes the coupling entirely; both blocks can
+   collapse into one when v2 is retired. */
+.v3 {
+  font-family: var(--font-jakarta);
+}
+
+.v3 .hero-dark {
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(115% 85% at 12% -5%, rgba(126, 90, 255, 0.42), transparent 62%),
+    linear-gradient(168deg, #251b55 0%, #191631 44%, #100f19 100%);
+}
+.v3 .hero-dark::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(95% 75% at 50% 15%, #000 22%, transparent 78%);
+  mask-image: radial-gradient(95% 75% at 50% 15%, #000 22%, transparent 78%);
+}
+.v3 .hero-dark > * {
+  position: relative;
+}
+
+/* ---- .doc scope: the submission pages ----
+
+   The one colour rule, and it is the whole visual logic of these pages:
+   PURPLE MEANS ROCKED'S. Their quotes, their screenshots, links into their
+   product. Everything written in the candidate's own voice is ink on paper. If
+   purple ever appears in his own voice the rule stops carrying meaning, so the
+   verification step for these pages is a purple audit, not a colour-contrast
+   pass.
+
+   Boldness is spent in one place — the transcript object at the top. Everything
+   around it is deliberately quiet. */
+.doc {
+  background: var(--color-paper);
+  color: var(--color-r-ink);
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+.doc .display {
+  font-family: var(--font-bricolage-sans);
+}
+
+.doc .mono {
+  font-family: var(--font-plex);
+  font-feature-settings: "zero" 1;
+}
+
+/* The signature: a transcript where the finding is marked by absence. Where the
+   customer's reaction should be there is a hairline and two words, not a red
+   warning — on a page this dense with evidence, silence reads louder, and it
+   holds the tone at "here is the gap" rather than "here is your bug". */
+.doc .tape {
+  border-left: 2px solid var(--color-r-brand);
+}
+
+/* The tour's phone column.
+   The frame is a real 402x874, and on a 900-1000px-tall laptop that plus the
+   header and padding overflows — the mic controls got clipped. Scaled down for
+   display rather than resized: the app inside still lays out at 402px, so the
+   prototype renders exactly as it does on a device. Shrinking the frame's
+   logical width would reflow the product and defeat the point of showing a
+   mobile app; scaling the rendered result does not. */
+@media (max-height: 1010px) {
+  .tour-phone {
+    transform: scale(0.84);
+    transform-origin: top center;
+    margin-bottom: -140px;
+  }
+}
+@media (max-height: 880px) {
+  .tour-phone {
+    transform: scale(0.72);
+    margin-bottom: -245px;
+  }
+}
+
+.doc .absent {
+  position: relative;
+}
+.doc .absent::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px dashed var(--color-rule);
 }
 
 html {
@@ -120,6 +502,22 @@ body {
 }
 .pulse-live {
   animation: pulse-live 1.6s ease-in-out infinite;
+}
+
+/* The call screen's mic invite, shown until the rep's first turn and never
+   again. A bare purple circle on a black screen reads as a status light rather
+   than a control — reviewers reached the call and concluded it was dead.
+   A CSS keyframe rather than a framer-motion loop on purpose: the
+   prefers-reduced-motion block at the end of this file zeroes it for free,
+   which framer-motion would not honour. Capped at 1.6 so the ring stays inside
+   the control bar's 56+32px box instead of crossing its top border.
+   Not `pulse-live` — that shrinks and fades, built for a status LED. */
+@keyframes ring-invite {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(1.6); opacity: 0; }
+}
+.ring-invite {
+  animation: ring-invite 1.9s ease-out infinite;
 }
 
 @keyframes shake-bad {

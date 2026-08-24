@@ -39,7 +39,7 @@ const NAV = [
  *  language, not just its techniques, is the intentional call. */
 export function ManagerShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen flex-col bg-r-canvas text-r-ink">
+    <div className="v3 flex h-screen flex-col bg-r-canvas text-r-ink">
       <header className="flex h-[56px] shrink-0 items-center gap-3 border-b border-r-line bg-white px-5">
         <span className="flex h-[28px] w-[28px] items-center justify-center rounded-[8px] bg-r-brand text-[13px] font-bold text-white">
           R
@@ -48,7 +48,7 @@ export function ManagerShell({ children }: { children: React.ReactNode }) {
           <span className="block text-[14px] font-bold leading-none tracking-[-0.01em]">RockED — Sales Coaching</span>
           <span className="mono block text-[10px] leading-none text-r-ink-4">manager view</span>
         </span>
-        <a href="/v1" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
+        <a href="/prototype" className="ml-auto text-[13px] font-medium text-r-brand hover:underline">
           ← Rep app
         </a>
         <span className="mx-1 h-[20px] w-px bg-r-line" />
@@ -156,7 +156,7 @@ export function RepDetail({
           {rep.initials}
         </span>
         <div>
-          <p className="text-[19px] font-extrabold tracking-[-0.01em] text-r-ink">{rep.name}</p>
+          <p className="text-title-3 text-r-ink">{rep.name}</p>
           <p className="mono text-[12px] text-r-ink-4">
             Practice avg {rep.practiceScore}/10 &middot; CRM close rate {Math.round(rep.crm.closeRate * 100)}%
           </p>
@@ -177,7 +177,7 @@ export function RepDetail({
           {(Object.keys(COACHING_LABELS) as CoachingPillar[]).map((k) => (
             <div key={k} className="card-lift p-3">
               <div className="flex items-center gap-1">
-                <span className="mono text-[20px] font-extrabold text-r-ink">{rep.coaching[k].current}</span>
+                <span className="mono text-title-2 text-r-ink">{rep.coaching[k].current}</span>
                 <TrendIcon trend={rep.coaching[k].trend} />
               </div>
               <p className="mt-1 text-[11.5px] leading-snug text-r-ink-3">{COACHING_LABELS[k]}</p>
@@ -205,6 +205,12 @@ export function RepDetail({
             {rep.flaggedMoments.map((m, i) => (
               <div key={i} className="card-lift p-3">
                 <p className="text-[12.5px] leading-snug text-r-ink-2">
+                  {/* Long label on purpose. The manager view stays on the full
+                      phrasing throughout — a rep scanning a 402px board wants
+                      "Hold the price", but someone deciding what work to hand
+                      out wants the specific version. Also keeps this consistent
+                      with the Coverage gaps list below, whose "Assigned" state
+                      is matched by comparing these label strings. */}
                   <span className="font-semibold text-r-ink">Practiced</span> {capabilityById(m.capabilityId)?.label ?? m.personaName}, {m.date}
                   {" → "}
                   <span className="font-semibold text-r-ink">Real call</span>, {m.realDate}: {m.realOutcome}
