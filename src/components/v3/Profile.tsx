@@ -83,21 +83,17 @@ export function Profile({
                   </div>
                 ))}
               </div>
+              {/* One line, not three. This screen's job is to be read between
+                  ups on a sales floor, and the paragraph that used to sit here
+                  restated what the tiles above already say. Mike's ask — give
+                  the rep a reason in floor terms, not just a pillar score —
+                  survives as the date, which is the part that stings. */}
               {lowestPillar && (
                 <div className="rounded-[14px] bg-r-amber-tint p-3">
                   <p className="text-[13px] leading-snug text-r-ink-2">
-                    Your lowest average is <span className="font-semibold">{COACHING_PILLAR_LABELS[lowestPillar]}</span> —
-                    worth a custom scenario built around it.
+                    Lowest: <span className="font-semibold">{COACHING_PILLAR_LABELS[lowestPillar]}</span>
+                    {topMoment && <> — the same gap cost you a real call on {topMoment.realDate}.</>}
                   </p>
-                  {/* Mike's ask: give the rep a reason of their own, in money, not just a
-                      pillar score — reusing the real pairing already on hand below, not a
-                      new invented statistic. */}
-                  {topMoment && (
-                    <p className="mt-2 border-t border-black/10 pt-2 text-[12.5px] leading-snug text-r-ink-2">
-                      That same gap cost real ground on {topMoment.realDate} — closing it in practice is the
-                      fastest way to stop it happening again on the floor, on your numbers, not just your score.
-                    </p>
-                  )}
                 </div>
               )}
               {avoided.length > 0 && (
@@ -135,8 +131,50 @@ export function Profile({
               rep, the exact same numbers) the Manager view already uses.
               This used to be one hardcoded sentence, identical for every
               rep and every session; that inconsistency was the whole point
-              of Fix 5. */}
+              of Fix 5.
+
+              Numbers first, prose second. This section used to open with two
+              paragraphs of practiced-then-real narration and bury the close
+              rate below them, which meant the one thing a rep is actually
+              measured on was the last thing they saw. */}
           <div className="flex flex-col gap-2.5">
+            <div className="card-lift p-3.5">
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  ["Close", rep.crm.closeRate],
+                  ["Upsell", rep.crm.upsellRate],
+                  ["Show", rep.crm.showRate],
+                ].map(([label, v]) => (
+                  <div key={label as string}>
+                    <p className="mono text-title-2 text-r-ink">
+                      {Math.round((v as number) * 100)}
+                      <span className="text-[12px] font-medium text-r-ink-4">%</span>
+                    </p>
+                    <p className="mt-1 text-[12px] text-r-ink-3">{label as string}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* A close rate with nothing beside it is a number; next to the
+                  real rooftop average it's a coaching conversation. Both lanes
+                  are named because they're 15 points apart — benchmarked against
+                  digital leads the same figure would read as above average. */}
+              <div className="mt-3 border-t border-r-line pt-2.5">
+                <p className="text-[12px] leading-snug text-r-ink-3">
+                  Showroom average <span className="font-semibold text-r-ink-2">25–30%</span>, digital leads{" "}
+                  <span className="font-semibold text-r-ink-2">8–12%</span>. These are showroom ups.
+                </p>
+                <p className="mono mt-1 text-[10px] uppercase tracking-[0.08em] text-r-ink-4">
+                  Cox Automotive / J.D. Power · NADA
+                </p>
+              </div>
+
+              <p className="mono mb-2 mt-3.5 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+                6-week trend
+              </p>
+              <TrendChart data={rep.trend} />
+            </div>
+
             {rep.flaggedMoments.map((m, i) => (
               <div key={i} className="card-lift p-3.5">
                 <p className="text-[12.5px] leading-relaxed text-r-ink-2">
@@ -148,26 +186,10 @@ export function Profile({
               </div>
             ))}
 
-            <div className="card-lift p-3.5">
-              <div className="mb-2 flex items-center justify-between text-[13.5px]">
-                <span className="text-r-ink-2">Close rate</span>
-                <span className="font-semibold text-r-ink">{Math.round(rep.crm.closeRate * 100)}%</span>
-              </div>
-              <div className="mb-3 flex items-center justify-between text-[13.5px]">
-                <span className="text-r-ink-2">Upsell rate</span>
-                <span className="font-semibold text-r-ink">{Math.round(rep.crm.upsellRate * 100)}%</span>
-              </div>
-              <p className="mono mb-2 text-[10.5px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
-                6-week trend
-              </p>
-              <TrendChart data={rep.trend} />
-            </div>
-
-            <div className="rounded-[14px] border border-dashed border-r-brand-line bg-r-brand-tint/40 p-3.5">
+            <div className="rounded-[14px] border border-dashed border-r-brand-line bg-r-brand-tint/40 p-3">
               <RoadmapTag>Full rollout, not built yet</RoadmapTag>
-              <p className="mt-2 text-[12.5px] leading-relaxed text-r-ink-2">
-                Once call recordings are connected for your whole team, every rep gets this same
-                personalization automatically — no setup, no self-reporting.
+              <p className="mt-1.5 text-[12.5px] leading-snug text-r-ink-2">
+                Connect the whole team&apos;s call recordings and every rep gets this automatically.
               </p>
             </div>
           </div>

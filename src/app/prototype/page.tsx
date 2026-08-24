@@ -194,12 +194,24 @@ export default function RepApp() {
           signage for the two-tier architecture: the product works on practice
           data alone, and gets better when the dealer's systems are connected. */}
       <div className="fixed left-5 top-5 z-30 flex flex-col gap-2">
-        <a
-          href="/"
-          className="w-fit rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-r-ink-2 shadow-lg transition-colors hover:text-r-ink"
-        >
-          ← Back to the write-up
-        </a>
+        {/* Both other routes, not just the way back. Someone who lands here
+            first — from a forwarded link, or by clicking past the deck — has no
+            way of knowing the guided walkthrough exists otherwise, and the
+            walkthrough is the version that explains what they're looking at. */}
+        <div className="flex w-fit gap-2">
+          <a
+            href="/"
+            className="rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-r-ink-2 shadow-lg transition-colors hover:text-r-ink"
+          >
+            ← The write-up
+          </a>
+          <a
+            href="/tour"
+            className="rounded-full bg-white px-4 py-2 text-[12.5px] font-semibold text-r-brand shadow-lg transition-opacity hover:opacity-70"
+          >
+            Guided walkthrough
+          </a>
+        </div>
 
         <div className="w-fit rounded-[14px] bg-white p-2 shadow-lg">
           <p className="mono px-1 pb-[6px] text-[10px] font-semibold uppercase tracking-[0.09em] text-r-ink-4">
