@@ -29,7 +29,7 @@ const HIDE_DEV_OVERLAY = "nextjs-portal { display: none !important; }";
 
 const browser = await chromium.launch();
 
-// Tall viewport on purpose: `.tour-phone` carries a scale transform under
+// Tall viewport on purpose: `.proto-phone` carries a scale transform under
 // max-height 1010px, and a scaled frame screenshots soft.
 const page = await browser.newPage({
   viewport: { width: 1500, height: 1200 },
@@ -45,7 +45,10 @@ for (let k = 0; k < PHONE.length; k++) {
     await page.waitForTimeout(500);
   }
   await page.waitForTimeout(900);
-  await page.locator(".tour-phone").screenshot({ path: `${out}/${PHONE[k]}.png` });
+  // The device only. `.proto-phone` is the whole sticky column and now includes
+  // the walkthrough stepper below the frame, which bled into the shot; `.v3` is
+  // the slot that holds nothing but the phone.
+  await page.locator(".proto-phone .v3").screenshot({ path: `${out}/${PHONE[k]}.png` });
   console.log(`  ${PHONE[k].padEnd(10)} tour change ${k + 1}`);
 }
 

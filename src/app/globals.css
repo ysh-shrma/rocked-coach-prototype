@@ -410,7 +410,7 @@
   border-left: 2px solid var(--color-r-brand);
 }
 
-/* The tour's phone column.
+/* The prototype phone column, both modes.
    The frame is a real 402x874, and on a 900-1000px-tall laptop that plus the
    header and padding overflows — the mic controls got clipped. Scaled down for
    display rather than resized: the app inside still lays out at 402px, so the
@@ -418,14 +418,14 @@
    logical width would reflow the product and defeat the point of showing a
    mobile app; scaling the rendered result does not. */
 @media (max-height: 1010px) {
-  .tour-phone {
+  .proto-phone {
     transform: scale(0.84);
     transform-origin: top center;
     margin-bottom: -140px;
   }
 }
 @media (max-height: 880px) {
-  .tour-phone {
+  .proto-phone {
     transform: scale(0.72);
     margin-bottom: -245px;
   }
