@@ -115,7 +115,7 @@ export function Profile({
           {nextPersona && (
             <button
               onClick={onPracticeNow}
-              className="mt-3 flex w-full items-center gap-3 rounded-[14px] border border-r-brand-line bg-r-brand-tint p-3.5 text-left"
+              className="hint mt-3 flex w-full items-center gap-3 rounded-[14px] border border-r-brand-line bg-r-brand-tint p-3.5 text-left"
             >
               <span className="min-w-0 flex-1 text-[13.5px] font-semibold text-r-brand">
                 Practice {nextPersona.name} now

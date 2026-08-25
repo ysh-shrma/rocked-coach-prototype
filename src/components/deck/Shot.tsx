@@ -28,7 +28,6 @@ export function Shot({
   src,
   alt,
   label,
-  mine,
   desktop,
 }: {
   /** Undefined renders the "no screen exists" frame instead. */
@@ -36,20 +35,17 @@ export function Shot({
   alt: string;
   /** "RockED today" / "In the prototype" — sits above the frame. */
   label: string;
-  /** True for the prototype side. Ink label; RockED's side gets purple. */
-  mine?: boolean;
   desktop?: boolean;
 }) {
   const h = desktop ? DESKTOP_H : PHONE_H;
   return (
     <figure className="flex min-w-0 flex-col">
-      <p
-        className={`mono text-doc-label uppercase ${
-          mine ? "text-r-ink-4" : "text-r-brand"
-        }`}
-      >
-        {label}
-      </p>
+      {/* Both captions ink, never purple. Purple on these pages means "RockED's",
+          which is right as provenance in running prose and wrong above a
+          before/after pair, where colour reads as valence — it said "the old one
+          is the good one". The Comparison card beside these shots carries the
+          valence now, through contrast rather than hue. */}
+      <p className="mono text-doc-label uppercase text-r-ink-4">{label}</p>
 
       <div className="mt-3">
         {src ? (

@@ -165,7 +165,7 @@ export function Home({
             {nextReason && (
               <span className="mt-2 block text-footnote text-white/60">{nextReason}</span>
             )}
-            <span className="mt-4 inline-flex items-center gap-[7px] rounded-full bg-white px-4 py-[9px] text-[13.5px] font-bold text-r-ink">
+            <span className="hint mt-4 inline-flex items-center gap-[7px] rounded-full bg-white px-4 py-[9px] text-[13.5px] font-bold text-r-ink">
               Start practice call
               <ArrowRight size={14} strokeWidth={2.6} />
             </span>

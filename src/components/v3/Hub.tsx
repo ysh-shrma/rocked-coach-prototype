@@ -64,7 +64,7 @@ export function Hub({
           {nextPersona ? (
             <button
               onClick={() => onSelectPersona(nextPersona.id)}
-              className="card-lift flex w-full items-center gap-3.5 border-r-brand-line p-4 text-left"
+              className="hint card-lift flex w-full items-center gap-3.5 border-r-brand-line p-4 text-left"
               style={{ borderWidth: 1.5 }}
             >
               <PersonaAvatar name={nextPersona.name} size={48} />

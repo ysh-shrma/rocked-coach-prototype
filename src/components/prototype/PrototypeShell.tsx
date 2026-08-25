@@ -90,7 +90,16 @@ export function PrototypeShell({ initialMode }: { initialMode: Mode }) {
               device is in it. Guided's change 5 swaps in a desktop console scaled
               to 336 tall, and without a reserved slot the stepper below jumped
               ~540px on that one change. */}
-          <div className="v3 flex min-[1100px]:min-h-[874px] min-[1100px]:items-start">
+          <div
+            /* `hint-on` arms the click hints in globals.css, and it is Explore-only
+               on purpose. Guided pins its screens and its navigation is inert, so
+               a ring inviting a click that does nothing is worse than no ring —
+               and keeping it out of Guided is also what stops the animation
+               leaking into deck-shots.mjs captures, which are taken from /tour. */
+            className={`v3 flex min-[1100px]:min-h-[874px] min-[1100px]:items-start ${
+              isGuided ? "" : "hint-on"
+            }`}
+          >
             {desktopChange ? (
               <DesktopFrame>
                 <ManagerShell>

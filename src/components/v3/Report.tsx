@@ -186,12 +186,12 @@ export function Report({
           recommendation updates either way. */}
       <div className="shrink-0 border-t border-separator p-4">
         {result.outcome === "closed" ? (
-          <Btn size="lg" className="w-full" onClick={() => onBackToHub(weakSignal)}>
+          <Btn size="lg" className="hint w-full" onClick={() => onBackToHub(weakSignal)}>
             Back to Hub
           </Btn>
         ) : (
           <div className="flex flex-col gap-2">
-            <Btn size="lg" className="w-full" onClick={() => onBackToHub(persona.capabilityId)}>
+            <Btn size="lg" className="hint w-full" onClick={() => onBackToHub(persona.capabilityId)}>
               <Icon as={RotateCcw} size={16} />
               Practice {PILLAR_PRACTICE[weakest]}
             </Btn>
