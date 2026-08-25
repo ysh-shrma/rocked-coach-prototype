@@ -13,8 +13,18 @@
  *    If purple ever appears in his own voice the rule stops carrying meaning.
  */
 
-export function Label({ children }: { children: React.ReactNode }) {
-  return <p className="mono text-doc-label uppercase text-r-ink-4">{children}</p>;
+export function Label({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <p className={`mono text-doc-label uppercase text-r-ink-4 ${className}`}>
+      {children}
+    </p>
+  );
 }
 
 /** Emphasis in the author's own voice — ink, never purple. */
@@ -247,6 +257,52 @@ export function TrustLine() {
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * What the product recorded, against what the call actually cost.
+ *
+ * A real grid rather than two lists side by side, and that's the whole point. As
+ * two independent lists the columns started at different heights and ended at
+ * different heights the moment one side wrapped or lost a row — it read as
+ * off-balance because it *was*. Here each pair is one grid row, so the two sides
+ * cannot drift however the copy changes.
+ *
+ * It also makes the comparison explicit: a reader reads across, not down. So the
+ * pairs have to earn it — each right cell is the cost of the left cell beside it,
+ * not a loose consequence of the call in general.
+ *
+ * Left is purple because every line in it is RockED's own output, verbatim. Right
+ * is ink: the store's losses are the dealer's, not theirs.
+ */
+export function Ledger({
+  left,
+  right,
+  rows,
+}: {
+  left: string;
+  right: string;
+  rows: [string, string][];
+}) {
+  return (
+    <div className="grid grid-cols-1 gap-x-12 sm:grid-cols-2">
+      <Label>{left}</Label>
+      <Label className="hidden sm:block">{right}</Label>
+      {rows.map(([a, b]) => (
+        <div key={a} className="contents">
+          {/* Generous rows on purpose: this table is the whole slide, so it has
+              to fill the frame the way a screenshot would on the slides either
+              side of it. */}
+          <p className="mt-3 border-t border-rule pt-7 pb-1 text-doc-h3 text-r-brand sm:mt-5">
+            {a}
+          </p>
+          <p className="mt-1 border-t border-rule-2 pt-7 pb-1 text-doc-h3 text-r-ink sm:mt-5 sm:border-rule">
+            {b}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   Fact,
   Label,
   Layers,
+  Ledger,
   Ordered,
   Pull,
   Rk,
@@ -212,69 +213,50 @@ export default function SubmissionPage() {
         </p>
       </Slide>
 
-      {/* ---------- 4. The cost, said plainly ---------- */}
+      {/* ---------- 4. The cost, as the gap between two columns ---------- */}
 
       <Slide
         kicker="What it costs"
-        title="Three things it costs, and none of them show up anywhere."
+        title="The scorecard said halfway there. She was already gone."
         {...sec(4)}
-        right={
-          <div className="rounded-[14px] border border-rule bg-paper-2 p-8">
-            <Label>And the part that hides all three</Label>
-            <p className="mt-4 text-doc-body text-r-ink-2">
-              RockED publishes a{" "}
-              <Rk>10&ndash;15% average lift in service upsell</Rk>.{" "}
-              <Cite kind="vendor" inline>
-                across 300+ live dealers, not audited.
-              </Cite>
-            </p>
-            <p className="mt-4 text-doc-body text-r-ink-2">
-              Nobody can check it, because{" "}
-              <Em>nothing connects a practice session to a real outcome.</Em>
-            </p>
-            <p data-claim className="mt-6 border-t border-rule pt-6 text-doc-h3">
-              Which is the same gap from the other end.
-            </p>
-            <p className="mt-3 text-doc-body text-r-ink-2">
-              Nothing upstream has to be faithful to what moves a close rate if
-              nothing downstream measures one.
-            </p>
-          </div>
+        // The hinge of the whole deck, and it has to be on this slide: the left
+        // column is measured and the right isn't, *because* nothing joins a
+        // practice session to a real outcome. Slide 5 is the answer to this
+        // sentence, which is what keeps slides 2-5 one arc instead of two.
+        consequence="Every line on the left is a number in a system. Nothing on the right is, because nothing connects a practice session to a real outcome."
+        source={
+          <Cite kind="vendor">
+            RockED publishes a <Rk>10&ndash;15% average lift in service upsell</Rk>{" "}
+            across 300+ live dealers, not audited. Nothing in the right-hand column
+            could confirm or deny it, which is the gap the next slide closes.
+          </Cite>
         }
-        consequence="A practice tool that lets all eleven pass isn't neutral. It rehearses the behaviour."
       >
-        {/* Plain costs, in the order a GM would rank them. An earlier version drew
-            this as a CSI-to-stair-step-money chain, which performed the vocabulary
-            and asked the reader to accept four inferential steps before the point
-            landed. This version asks for none, and it's the more honest of the two.
-            No figure appears here, because every one would be invented. */}
-        <div className="space-y-3" data-artifact>
-          {[
-            {
-              k: "Lost customers",
-              v: "She said she'd keep looking. Twice.",
-              d: "A real customer is gone by item four — and she never reaches the F&I office at all, which is where the money in a deal actually is.",
-            },
-            {
-              k: "CSI",
-              v: "A customer told two prices for one car is a complaint.",
-              d: "She was lied to about availability, quoted $18,000 then $28,000, and told what her budget could afford. CSI is OEM-tracked and the GM is measured on it.",
-            },
-            {
-              k: "Reps who don't improve",
-              v: "He was told 14 out of 30, and to build excitement.",
-              d: "So he does it again next Saturday. This is the cost that compounds, and it's the one the product is supposed to be preventing.",
-            },
-          ].map((c) => (
-            <div
-              key={c.k}
-              className="rounded-[14px] border border-rule bg-paper-2 p-6"
-            >
-              <Label>{c.k}</Label>
-              <p className="mt-3 text-doc-h3">{c.v}</p>
-              <p className="mt-3 text-doc-small text-r-ink-3">{c.d}</p>
-            </div>
-          ))}
+        {/* Full width, no second column: the two halves of the argument ARE the
+            two halves of the table, so handing them to Slide's own grid would
+            nest a comparison inside a comparison and let the two sides drift
+            apart vertically. Read across, not down — each right cell is the cost
+            of the left cell beside it. */}
+        <div data-artifact>
+          <Ledger
+            left="What RockED measured"
+            right="What the store lost"
+            rows={[
+              ["14 out of 30", "The deal, and the F&I gross behind it"],
+              [
+                "Introduction 5/10, on a green bar",
+                "A customer who was lied to about the car",
+              ],
+              [
+                "\u201cFocus on building excitement\u201d",
+                "A CSI survey the GM answers for",
+              ],
+              [
+                "Docked for not collecting contact details",
+                "Any follow-up \u2014 he never took her number",
+              ],
+            ]}
+          />
         </div>
       </Slide>
 
