@@ -87,12 +87,18 @@ export function Profile({
                   ups on a sales floor, and the paragraph that used to sit here
                   restated what the tiles above already say. Mike's ask — give
                   the rep a reason in floor terms, not just a pillar score —
-                  survives as the date, which is the part that stings. */}
+                  survives as the date, which is the part that stings.
+
+                  The date is real-call data, so it's gated: on a practice-only
+                  account there is no real call to point at, and naming one would
+                  be the same leak the section below used to have. */}
               {lowestPillar && (
                 <div className="rounded-[14px] bg-r-amber-tint p-3">
                   <p className="text-[13px] leading-snug text-r-ink-2">
                     Lowest: <span className="font-semibold">{COACHING_PILLAR_LABELS[lowestPillar]}</span>
-                    {topMoment && <> — the same gap cost you a real call on {topMoment.realDate}.</>}
+                    {crmIntegrated && topMoment && (
+                      <> — the same gap cost you a real call on {topMoment.realDate}.</>
+                    )}
                   </p>
                 </div>
               )}
@@ -119,6 +125,30 @@ export function Profile({
           )}
         </motion.section>
 
+        {/* The two tiers, and the reason this is gated rather than always on.
+            Base is the whole day-one argument: a rooftop with nothing connected
+            still gets a profile. This section used to render whatever the account
+            was, so switching to practice-only changed nothing on screen and the
+            two-tier split read as a slide rather than a build — which is exactly
+            the claim the deck spends a slide buying. */}
+        {!crmIntegrated ? (
+          <motion.section {...rise(0.15)}>
+            <p className="mono mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
+              From your real calls
+            </p>
+            <div className="rounded-[14px] border border-dashed border-r-brand-line bg-r-brand-tint/40 p-3.5">
+              <RoadmapTag>Not connected</RoadmapTag>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-r-ink-2">
+                Connect the dealership&apos;s CRM and phone system and this fills with
+                your own close and upsell numbers, next to the pillar you drilled —
+                and the recorded call the drill came from.
+              </p>
+              <p className="mt-2 text-[12.5px] leading-relaxed text-r-ink-3">
+                Everything above works without it.
+              </p>
+            </div>
+          </motion.section>
+        ) : (
         <motion.section {...rise(0.15)}>
           <div className="mb-2 flex items-center justify-between">
             <p className="mono text-[11px] font-semibold uppercase tracking-[0.08em] text-r-ink-4">
@@ -194,6 +224,7 @@ export function Profile({
             </div>
           </div>
         </motion.section>
+        )}
       </div>
     </div>
   );

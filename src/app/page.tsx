@@ -530,23 +530,27 @@ function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
   );
 }
 
-/** Both paths, always together. Named on the first slide and the last, because
- *  the one thing this submission can't afford is a reader who never clicks. */
+/**
+ * One door. On the first slide and the last, because the one thing this
+ * submission can't afford is a reader who never clicks.
+ *
+ * This was two buttons — "walk the five changes" and "open the prototype" —
+ * which made a reader choose between two things before knowing what either was.
+ * Both still exist; they're now the two modes of one screen, and the switch
+ * lives in that screen's header.
+ */
 function Ways({ className = "" }: { className?: string }) {
   return (
     <div className={`flex flex-wrap items-center gap-3 ${className}`}>
       <Link
-        href="/tour"
+        href="/prototype"
         className="rounded-full bg-r-ink px-6 py-3 text-[15px] font-semibold text-white transition-colors hover:bg-r-ink-2"
       >
-        Walk the five changes &rarr;
+        View the prototype &rarr;
       </Link>
-      <Link
-        href="/prototype"
-        className="rounded-full border border-rule px-6 py-3 text-[15px] font-semibold text-r-ink-2 transition-colors hover:border-r-ink-4"
-      >
-        Open the prototype
-      </Link>
+      <span className="text-doc-small text-r-ink-3">
+        Explore it yourself, or switch to the guided walkthrough in one click.
+      </span>
     </div>
   );
 }
