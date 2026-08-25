@@ -15,10 +15,14 @@
  */
 
 /** One number, so the two sides of a pair can never drift out of alignment.
- *  Sized to fill the slide frame: at 420 the change slides sat at 61% vertical
- *  fill on a 1000px viewport, which read as an unfinished slide. */
-const PHONE_H = 470;
-const DESKTOP_H = 520;
+ *
+ *  Viewport-relative rather than fixed px, for two reasons. The type scale is
+ *  fluid, and a screenshot held at a constant height while the prose around it
+ *  grows starts reading as secondary to the commentary about it — the type inside
+ *  the shot ends up smaller than the deck's own body copy. And a fixed 470px was
+ *  a latent overflow on a 900px-tall laptop; a vh cap can't be. */
+const PHONE_H = "min(54vh, 560px)";
+const DESKTOP_H = "min(58vh, 600px)";
 
 export function Shot({
   src,
@@ -57,7 +61,7 @@ export function Shot({
           />
         ) : (
           <div
-            style={{ height: h, width: Math.round(h * 0.47) }}
+            style={{ height: h, aspectRatio: "0.47" }}
             className="flex items-center justify-center rounded-[10px] border border-dashed border-rule bg-paper-2"
           >
             <p className="mono px-4 text-center text-doc-label uppercase leading-relaxed text-r-ink-4">

@@ -92,6 +92,11 @@ export default function TourPage() {
               defeat the point of showing a mobile product. --- */}
       <div className="mx-auto flex max-w-[1400px] flex-col items-start gap-8 px-6 py-6 min-[1100px]:flex-row min-[1100px]:gap-14 md:px-8 md:py-8">
         <div className="tour-phone mx-auto shrink-0 min-[1100px]:mx-0 min-[1100px]:sticky min-[1100px]:top-8">
+          {/* The frame slot is the phone's height (874, per PhoneFrame) whichever
+              device is in it. Change 5 swaps in a desktop console scaled to 336
+              tall, and without a reserved slot the stepper below jumped ~540px on
+              that one change — the same bug as before, from the other direction. */}
+          <div className="flex min-[1100px]:min-h-[874px] min-[1100px]:items-start">
           {change.frame === "desktop" ? (
             <DesktopFrame>
               <ManagerShell>
@@ -121,17 +126,46 @@ export default function TourPage() {
               </div>
             </PhoneFrame>
           )}
+          </div>
+
+          {/* The stepper lives with the phone, not under the annotation.
+              A reserved-height annotation block can't work: change 1 runs 768px
+              at 1500px wide and 847px at 1200px, so any single reservation is
+              either short at one width or wasteful at the other, and the buttons
+              moved either way. Here they're inside the sticky column — always the
+              same screen position, always next to the thing they change. The
+              ○● string is gone because the header already carries "N of 5". */}
+          <div className="mt-5 flex items-center gap-3">
+            <button
+              onClick={() => setI((n) => Math.max(0, n - 1))}
+              disabled={atStart}
+              className="inline-flex items-center gap-2 rounded-full border border-rule px-5 py-[10px] text-[15px] font-semibold text-r-ink-2 transition-colors hover:border-r-ink-4 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-rule"
+            >
+              <ArrowLeft size={16} strokeWidth={2} />
+              Back
+            </button>
+            {atEnd ? (
+              <Link
+                href="/prototype"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-r-ink px-5 py-[10px] text-[15px] font-semibold text-white transition-colors hover:bg-r-ink-2"
+              >
+                Open the prototype
+                <ArrowRight size={16} strokeWidth={2} />
+              </Link>
+            ) : (
+              <button
+                onClick={() => setI((n) => Math.min(CHANGES.length - 1, n + 1))}
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-r-ink px-5 py-[10px] text-[15px] font-semibold text-white transition-colors hover:bg-r-ink-2"
+              >
+                Next
+                <ArrowRight size={16} strokeWidth={2} />
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="min-w-0 flex-1 pb-16">
-          {/* Fixed height, not shrink-to-fit. The five changes carry different
-              amounts of annotation — some have a `tryIt`, some a `caveat` — so in
-              normal flow the Back/Next row landed at a different y on every
-              change and the reader had to chase the button they'd just pressed.
-              Reserving the tallest change's height pins the controls without
-              taking them out of flow, so the stacked layout below 1100px still
-              scrolls normally. */}
-          <div className="min-[1100px]:min-h-[680px]">
+          <div>
             <AnimatePresence mode="wait">
             <motion.div
               key={change.id}
@@ -165,6 +199,20 @@ export default function TourPage() {
                 {change.consequence}
               </p>
 
+              {/* The other half of the same change, where there is one. Sits
+                  above `also` because it's part of the change rather than a
+                  second argument about it. */}
+              {change.partTwo && (
+                <div className="mt-6 border-t border-rule pt-5">
+                  <p className="mono text-doc-label uppercase text-r-ink-4">
+                    And part two
+                  </p>
+                  <p className="mt-3 text-doc-body text-r-ink-2">
+                    {change.partTwo}
+                  </p>
+                </div>
+              )}
+
               {/* A second argument the screen alone doesn't carry. */}
               {change.also && (
                 <p className="mt-6 text-doc-body text-r-ink-2">{change.also}</p>
@@ -193,36 +241,6 @@ export default function TourPage() {
             </AnimatePresence>
           </div>
 
-          <div className="mt-10 flex items-center gap-3 border-t border-rule pt-6">
-            <button
-              onClick={() => setI((n) => Math.max(0, n - 1))}
-              disabled={atStart}
-              className="inline-flex items-center gap-2 rounded-full border border-rule px-5 py-[10px] text-[15px] font-semibold text-r-ink-2 transition-colors hover:border-r-ink-4 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-rule"
-            >
-              <ArrowLeft size={16} strokeWidth={2} />
-              Back
-            </button>
-            {atEnd ? (
-              <Link
-                href="/prototype"
-                className="inline-flex items-center gap-2 rounded-full bg-r-ink px-5 py-[10px] text-[15px] font-semibold text-white transition-colors hover:bg-r-ink-2"
-              >
-                Open the prototype
-                <ArrowRight size={16} strokeWidth={2} />
-              </Link>
-            ) : (
-              <button
-                onClick={() => setI((n) => Math.min(CHANGES.length - 1, n + 1))}
-                className="inline-flex items-center gap-2 rounded-full bg-r-ink px-5 py-[10px] text-[15px] font-semibold text-white transition-colors hover:bg-r-ink-2"
-              >
-                Next
-                <ArrowRight size={16} strokeWidth={2} />
-              </button>
-            )}
-            <span className="mono ml-auto text-doc-label uppercase text-r-ink-4">
-              {CHANGES.map((_, n) => (n === i ? "●" : "○")).join(" ")}
-            </span>
-          </div>
         </div>
       </div>
     </div>

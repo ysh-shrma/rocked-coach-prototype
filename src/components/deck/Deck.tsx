@@ -17,10 +17,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 export function Deck({
   labels,
+  sections,
   children,
 }: {
   /** One per slide, in order. Drives the rail's hover labels and the counter. */
   labels: string[];
+  /**
+   * One per slide, parallel to `labels` — the section each slide belongs to,
+   * `null` for the cover. The rail breaks between sections so its shape matches
+   * the argument's; without it thirteen identical dots say nothing about
+   * structure. Derived upstream from the same plan the slides read, so the rail
+   * can't disagree with the badges.
+   */
+  sections?: (string | null)[];
   children: React.ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -92,6 +101,13 @@ export function Deck({
         {labels.map((label, k) => (
           <button
             key={label}
+            style={
+              // A break, not a separator element: keeps every dot on the same
+              // grid so the rail stays a rail.
+              sections && k > 0 && sections[k] !== sections[k - 1]
+                ? { marginTop: 9 }
+                : undefined
+            }
             onClick={() => go(k)}
             aria-label={`${k + 1}. ${label}`}
             aria-current={k === i}

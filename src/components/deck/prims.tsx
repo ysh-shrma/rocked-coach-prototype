@@ -106,7 +106,7 @@ export function Ordered({
   return (
     <ol className="divide-y divide-rule-2 border-y border-rule">
       {items.map((it, i) => (
-        <li key={it.id} className="flex gap-4 py-[9px]">
+        <li key={it.id} className="flex gap-4 py-[6px]">
           <span className="mono w-4 shrink-0 pt-[3px] text-doc-mono text-r-ink-4">
             {i + 1}
           </span>
@@ -145,7 +145,7 @@ export function Pull({
   );
 }
 
-/* ---------- The three drawn artifacts ---------- */
+/* ---------- The two drawn artifacts ---------- */
 
 /**
  * Trust across the eleven turns, twice: as the product scores it, and as it would
@@ -180,7 +180,7 @@ function Plot({
     <figure>
       <p className="mono text-doc-label uppercase text-r-ink-4">{label}</p>
       <svg
-        viewBox="0 0 340 124"
+        viewBox="0 0 340 96"
         className="mt-3 block w-full"
         role="img"
         aria-label={label}
@@ -190,9 +190,9 @@ function Plot({
           <line
             key={i}
             x1={x(i)}
-            y1={12}
+            y1={8}
             x2={x(i)}
-            y2={112}
+            y2={88}
             stroke="var(--color-rule-2)"
             strokeWidth="1"
           />
@@ -231,83 +231,22 @@ function Plot({
 
 export function TrustLine() {
   return (
-    <div className="max-w-[600px] rounded-[14px] border border-rule bg-paper-2 p-6">
-      <div className="space-y-6">
+    <div className="max-w-[600px] rounded-[14px] border border-rule bg-paper-2 p-5">
+      <div className="space-y-4">
         <Plot
           label="Today — every turn judged fresh"
-          ys={Array.from({ length: 11 }, () => 52)}
+          ys={Array.from({ length: 11 }, () => 44)}
           tone="flat"
         />
-        <div className="border-t border-rule-2 pt-6">
+        <div className="border-t border-rule-2 pt-4">
           <Plot
             label="What it needs — damage that compounds"
-            ys={[22, 28, 36, 54, 62, 80, 88, 104]}
-            floor={104}
+            ys={[16, 21, 28, 42, 49, 62, 69, 80]}
+            floor={80}
             tone="decay"
           />
         </div>
       </div>
-      <p className="mt-5 text-doc-small text-r-ink-3">
-        Eleven turns, left to right. The floor is item eight — the price jump.
-      </p>
-    </div>
-  );
-}
-
-/**
- * Where the conduct actually costs the store. Two branches on purpose: the CSI
- * path is the one a GM is measured on, the F&I path is where the money is. A
- * single-branch version reads as a CSI slide, and a deck that never mentions
- * back-end gross tells a dealer you don't know where their money comes from.
- *
- * No figure anywhere in here. The mechanism is the argument and every dollar
- * value would be invented.
- */
-export function Chain() {
-  const branches = [
-    {
-      head: "The manufacturer's survey",
-      steps: ["CSI score", "OEM scorecard", "Stair-step volume money"],
-    },
-    {
-      head: "She reaches the F&I office already distrusting the store",
-      steps: ["Declines the service contract", "Back-end gross"],
-    },
-  ];
-  return (
-    <div className="rounded-[14px] border border-rule bg-paper-2 p-8">
-      <p className="text-doc-body font-semibold text-r-ink">
-        Eleven things, one customer
-      </p>
-      <div className="mt-6 grid gap-7 sm:grid-cols-2">
-        {branches.map((b) => (
-          <div key={b.head} className="border-l-2 border-rule pl-5">
-            <p className="min-h-[52px] text-doc-small text-r-ink-2">{b.head}</p>
-            {/* Vertical, not a row of pills. A chain drawn downward reads as
-                consequence — each step is caused by the one above it — and it
-                gives the slide the height that the deleted paragraphs used to
-                occupy. */}
-            <div className="mt-5 space-y-3">
-              {b.steps.map((s, i) => (
-                <div key={s}>
-                  {i > 0 && (
-                    <p className="py-1 text-doc-small leading-none text-r-ink-4">
-                      &darr;
-                    </p>
-                  )}
-                  <p className="rounded-[10px] border border-rule bg-paper px-4 py-[9px] text-doc-small text-r-ink">
-                    {s}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-      <p className="mt-7 border-t border-rule-2 pt-5 text-doc-small text-r-ink-3">
-        Numbers the store already tracks. Neither is one this practice tool can
-        see.
-      </p>
     </div>
   );
 }

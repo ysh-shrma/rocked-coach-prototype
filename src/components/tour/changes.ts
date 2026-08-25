@@ -83,6 +83,17 @@ export type Change = {
   forTheRep?: string;
   /** The same at one line, for the deck. */
   forTheRepShort?: string;
+  /**
+   * A second half of the same change, where the change genuinely has two parts.
+   *
+   * Change 1 is the only one today: the call can be lost, *and* the turn-taking
+   * has to be real. That second half used to live in `caveat`, which framed it
+   * as a shortfall — "here's what the mock can't do". It isn't a shortfall, it's
+   * a requirement being specified, and stating it that way is the stronger and
+   * more accurate position. A clickable prototype still can't demonstrate it,
+   * which the copy says outright.
+   */
+  partTwo?: string;
   /** Optional caveat stated rather than hidden. */
   caveat?: string;
   /**
@@ -116,8 +127,8 @@ export const CHANGES: Change[] = [
       "A pressure tactic now costs something, so practising one teaches the opposite of what it teaches today.",
     tryIt:
       "The phone is live on this change — tap the mic and pick a line. Every choice moves the meter.",
-    caveat:
-      "A real conversation gives you no time to compose. This mock can't demonstrate that pacing pressure — real-time turn-taking is a requirement for the real build, not something I've solved here.",
+    partTwo:
+      "Real-time turn-taking. She doesn’t wait while you compose — push-to-talk hands a rep unlimited think time, and having to answer *now* is half of what makes a hard conversation hard. Specified, not built: a clickable mock can’t demonstrate pacing.",
   },
   {
     id: "verdict",
@@ -167,11 +178,11 @@ export const CHANGES: Change[] = [
     before:
       "No rep profile at all. Nothing links what a rep practised to what happened on a real call, so practice and performance are two unconnected facts about the same person.",
     after:
-      "Two independent layers, not a fallback. Base works for any dealership on day one, built from in-app practice alone. Enhanced adds the CRM and the calling system \u2014 the rep's real close and upsell numbers, mapped to their actual recorded calls, feeding the same profile.",
+      "Two independent layers, not a fallback. Base works for any dealership on day one, built from in-app practice alone. Enhanced connects the CRM \u2014 VinSolutions, DealerSocket or Elead \u2014 and the phone system, so the same profile carries his real numbers: close rate and upsell per RO next to the pillar he drilled, and the recorded call the drill came from.",
     beforeShort:
       "No rep profile at all. Practice and performance stay two unconnected facts about one person.",
     afterShort:
-      "Two layers. Base works day one; Enhanced maps his real close numbers onto the same profile.",
+      "Base works day one. Enhanced reads VinSolutions, DealerSocket or Elead plus the phone system, and puts his close rate and upsell per RO beside the pillar he drilled.",
     consequence:
       "This is the mechanism that would prove or kill the published upsell-lift number. Right now nothing in the product can.",
     caveat:

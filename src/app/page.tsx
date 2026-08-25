@@ -6,7 +6,6 @@ import { Slide } from "@/components/deck/Slide";
 import { Shot } from "@/components/deck/Shot";
 import {
   Assumed,
-  Chain,
   Cite,
   Em,
   Fact,
@@ -63,49 +62,81 @@ import {
  *    damage never accumulates, not that one probe was missed.
  */
 
-const LABELS = [
-  "The claim",
-  "The call",
-  "Their own coaching",
-  "Why it happens",
-  "What it costs",
-  "The integration",
-  "What I built",
-  ...CHANGES.map((c) => c.title),
-  "What I'd ship first",
-  "Who's writing this",
+/**
+ * The four acts, and the only place slide order is declared.
+ *
+ * `LABELS`, the dot rail's section breaks, and every slide's top-right badge all
+ * derive from this, so they cannot disagree with each other. The cover carries no
+ * section — a badge on slide 1 would be answering a question nobody has yet.
+ */
+const SECTION_PLAN: { section: string | null; labels: string[] }[] = [
+  { section: null, labels: ["The claim"] },
+  { section: "The finding", labels: ["The call", "Their own coaching"] },
+  { section: "The stakes", labels: ["What it costs"] },
+  {
+    section: "The fix",
+    labels: ["The integration", "One loop, four moves", ...CHANGES.map((c) => c.title)],
+  },
+  { section: "What I'd ship", labels: ["Ship first", "Who's writing this"] },
 ];
+
+const LABELS = SECTION_PLAN.flatMap((g) => g.labels);
+const SECTIONS = SECTION_PLAN.flatMap((g) => g.labels.map(() => g.section));
+
+/** The badge props for slide `n` (1-based). Sections of one slide get no step. */
+function sec(n: number): { section?: string; step?: string } {
+  let i = 0;
+  for (const g of SECTION_PLAN) {
+    if (n <= i + g.labels.length) {
+      if (!g.section) return {};
+      return {
+        section: g.section,
+        step: g.labels.length > 1 ? `${n - i} of ${g.labels.length}` : undefined,
+      };
+    }
+    i += g.labels.length;
+  }
+  return {};
+}
 
 export default function SubmissionPage() {
   return (
-    <Deck labels={LABELS}>
+    <Deck labels={LABELS} sections={SECTIONS}>
       {/* ---------- 1. Start at the end ---------- */}
 
       <Slide
         kicker="RockED · Product Manager take-home"
         right={
-          <figure>
-            <img
+          // Both reports, because the before/after of the whole submission in one
+          // glance is what "start at the end" actually means. Shot already renders
+          // this pair with the purple/ink labels the rest of the deck uses.
+          <div className="flex gap-5">
+            <Shot
               src="/before/result.png"
-              alt="RockED's own score report for the call: 14 out of 30."
-              className="block w-full max-w-[300px] rounded-[14px] border border-rule shadow-[0_26px_60px_-30px_rgba(20,19,26,0.5)]"
+              alt="RockED's own report for the call: 14 out of 30."
+              label="RockED today"
             />
-            <figcaption className="mt-4 max-w-[300px] text-doc-small text-r-ink-3">
-              RockED&rsquo;s own report for that call.
-            </figcaption>
-          </figure>
+            <Shot
+              src="/after/report.png"
+              alt="The redesigned report, headed “You lost her.”"
+              label="In the prototype"
+              mine
+            />
+          </div>
         }
       >
-        <h1 className="display text-doc-hero">
-          I build the voice agents that make these calls. I ran RockED&rsquo;s AI
-          Coach as the worst salesperson I could invent — and its coaching advice
-          was &ldquo;build excitement.&rdquo;
+        {/* Two tiers, not one block. The finding sets it up and the claim is what
+            the eye should land on — at one hero size a ~48-word opening runs
+            seven lines and neither half wins. */}
+        <p className="text-doc-h3 text-r-ink-2">
+          I ran RockED&rsquo;s AI Coach as the worst salesperson I could invent —
+          and its coaching advice was <Rk>&ldquo;build excitement.&rdquo;</Rk>
+        </p>
+        <h1 className="display mt-5 text-doc-hero">
+          So I rebuilt the loop: the call can be lost, the report names the mistake
+          that lost it, and his real calls show within days whether he stopped.
         </h1>
         <Who />
-        <p className="mt-7 text-doc-body text-r-ink-2">
-          Eleven things went wrong in one conversation. She stayed warm through
-          every one of them.
-        </p>
         <Ways className="mt-8" />
       </Slide>
 
@@ -114,20 +145,27 @@ export default function SubmissionPage() {
       <Slide
         kicker="The call"
         title="Eleven things went wrong. She still asked to see the car."
+        {...sec(2)}
         right={
-          <div className="lg:pt-1">
-            <Label>How it ended</Label>
-            <p className="mt-4 text-doc-body text-r-ink">
+          // The list and the plot are the same eleven turns in two
+          // representations, which is why the old standalone "why it happens"
+          // slide folded in here rather than being cut: the mechanism belongs
+          // next to the evidence for it, not on a slide of its own arguing
+          // architecture.
+          <div data-artifact>
+            <TrustLine />
+            <p className="mt-5 text-doc-body text-r-ink">
               &ldquo;I guess I&rsquo;m sort of leaning toward it. Could I at least
               see it?&rdquo;
             </p>
-            <p className="mt-5 text-doc-small text-r-ink-2">
-              She said she&rsquo;d keep looking at items eight and nine.{" "}
-              <Em>Both times the call carried on.</Em>
+            <p className="mt-3 text-doc-small text-r-ink-2">
+              Her last line. She said she&rsquo;d keep looking at items eight and
+              nine and <Em>both times the call carried on</Em> — because each turn
+              is judged fresh and trust never compounds downward.
             </p>
             <Cite kind="first-party">
-              Three sessions, 21&ndash;22 August 2026. This is the third, run
-              deliberately to find what she would react to.
+              Session 3 of 3, 22 August 2026 — run deliberately to find what she
+              would react to.
             </Cite>
           </div>
         }
@@ -141,12 +179,14 @@ export default function SubmissionPage() {
       <Slide
         kicker="Their own coaching"
         title="Then it told me to build excitement."
+        {...sec(3)}
         right={
           <figure>
             <img
               src="/before/result-bars.png"
               alt="RockED's scorecard: Introduction 5/10 on a green bar, Qualifying 6/10, Closing 3/10."
-              className="block w-full max-w-[500px] rounded-[12px] border border-rule shadow-[0_20px_50px_-28px_rgba(20,19,26,0.5)]"
+              style={{ maxHeight: "min(46vh, 470px)" }}
+              className="block w-auto max-w-full rounded-[12px] border border-rule shadow-[0_20px_50px_-28px_rgba(20,19,26,0.5)]"
             />
             <figcaption className="mt-4 max-w-[500px] text-doc-small text-r-ink-3">
               <Rk>Introduction, 5 out of 10, green</Rk> — for a call that opened at
@@ -172,50 +212,15 @@ export default function SubmissionPage() {
         </p>
       </Slide>
 
-      {/* ---------- 4. The mechanism, drawn ---------- */}
-
-      <Slide
-        kicker="Why it happens"
-        title="She has no memory of being lied to."
-        flip
-        right={
-          <div data-artifact>
-            <TrustLine />
-          </div>
-        }
-        consequence="A smarter customer wouldn't fix this. She needs a memory, not a bigger vocabulary."
-      >
-        <p className="text-doc-body text-r-ink-2">
-          She corrected the model. She flagged the price jump. Then carried on as
-          though neither had happened, because{" "}
-          <Em>each turn is judged fresh and trust never compounds downward.</Em>
-        </p>
-        <p className="mt-4 text-doc-body text-r-ink-2">
-          I recognised it because it&rsquo;s the hard part of my own work.{" "}
-          <Em>A prompt-driven roleplay can hold facts and can&rsquo;t hold a
-          grudge.</Em>
-        </p>
-        <dl className="mt-7 divide-y divide-rule-2 border-y border-rule">
-          <Fact term="What a turn can see today">
-            The facts stated in it. A contradiction inside one claim is catchable;
-            a pattern across nine turns isn&rsquo;t.
-          </Fact>
-          <Fact term="What it needs">
-            A trust value that persists between turns, moves on conduct as well as
-            on facts, and can reach a floor.
-          </Fact>
-        </dl>
-      </Slide>
-
-      {/* ---------- 5. The cost. One arc — the sim ignores conduct because
-                       nothing downstream measures conduct. ---------- */}
+      {/* ---------- 4. The cost, said plainly ---------- */}
 
       <Slide
         kicker="What it costs"
-        title="It rehearses toward two numbers the store is already paid on."
+        title="Three things it costs, and none of them show up anywhere."
+        {...sec(4)}
         right={
           <div className="rounded-[14px] border border-rule bg-paper-2 p-8">
-            <Label>And the part that hides it</Label>
+            <Label>And the part that hides all three</Label>
             <p className="mt-4 text-doc-body text-r-ink-2">
               RockED publishes a{" "}
               <Rk>10&ndash;15% average lift in service upsell</Rk>.{" "}
@@ -228,7 +233,7 @@ export default function SubmissionPage() {
               <Em>nothing connects a practice session to a real outcome.</Em>
             </p>
             <p data-claim className="mt-6 border-t border-rule pt-6 text-doc-h3">
-              The same gap from the other end.
+              Which is the same gap from the other end.
             </p>
             <p className="mt-3 text-doc-body text-r-ink-2">
               Nothing upstream has to be faithful to what moves a close rate if
@@ -236,10 +241,40 @@ export default function SubmissionPage() {
             </p>
           </div>
         }
-        consequence="So a practice tool that lets all eleven pass isn't neutral. It rehearses toward the bill."
+        consequence="A practice tool that lets all eleven pass isn't neutral. It rehearses the behaviour."
       >
-        <div data-artifact>
-          <Chain />
+        {/* Plain costs, in the order a GM would rank them. An earlier version drew
+            this as a CSI-to-stair-step-money chain, which performed the vocabulary
+            and asked the reader to accept four inferential steps before the point
+            landed. This version asks for none, and it's the more honest of the two.
+            No figure appears here, because every one would be invented. */}
+        <div className="space-y-3" data-artifact>
+          {[
+            {
+              k: "Lost customers",
+              v: "She said she'd keep looking. Twice.",
+              d: "A real customer is gone by item four — and she never reaches the F&I office at all, which is where the money in a deal actually is.",
+            },
+            {
+              k: "CSI",
+              v: "A customer told two prices for one car is a complaint.",
+              d: "She was lied to about availability, quoted $18,000 then $28,000, and told what her budget could afford. CSI is OEM-tracked and the GM is measured on it.",
+            },
+            {
+              k: "Reps who don't improve",
+              v: "He was told 14 out of 30, and to build excitement.",
+              d: "So he does it again next Saturday. This is the cost that compounds, and it's the one the product is supposed to be preventing.",
+            },
+          ].map((c) => (
+            <div
+              key={c.k}
+              className="rounded-[14px] border border-rule bg-paper-2 p-6"
+            >
+              <Label>{c.k}</Label>
+              <p className="mt-3 text-doc-h3">{c.v}</p>
+              <p className="mt-3 text-doc-small text-r-ink-3">{c.d}</p>
+            </div>
+          ))}
         </div>
       </Slide>
 
@@ -248,7 +283,8 @@ export default function SubmissionPage() {
 
       <Slide
         kicker="The integration"
-        title="Read the CRM. Listen to the calls. Prove it next month."
+        title="Read the CRM. Listen to the calls. Prove it in days."
+        {...sec(5)}
         flip
         right={
           <div data-artifact>
@@ -261,8 +297,8 @@ export default function SubmissionPage() {
         <div className="mt-4">
           <Pull>
             &ldquo;We read your CRM and we listen to your calls. We know what
-            you&rsquo;re doing wrong. We&rsquo;ll help you fix it, and we&rsquo;ll
-            show you it moved next month.&rdquo;
+            you&rsquo;re doing wrong. We&rsquo;ll help you fix it, and your next
+            week of calls will show whether it worked.&rdquo;
           </Pull>
         </div>
         <p className="mt-7 text-doc-body text-r-ink-2">
@@ -289,12 +325,14 @@ export default function SubmissionPage() {
       <Slide
         kicker="What I built"
         title="One loop, four moves."
+        {...sec(6)}
         right={
           <figure>
             <img
               src="/after/report.png"
               alt="The redesigned score report, headed “You lost her.”"
-              className="block w-full max-w-[262px] rounded-[14px] border border-rule shadow-[0_26px_60px_-30px_rgba(20,19,26,0.5)]"
+              style={{ maxHeight: "min(48vh, 500px)" }}
+              className="block w-auto max-w-full rounded-[14px] border border-rule shadow-[0_26px_60px_-30px_rgba(20,19,26,0.5)]"
             />
             <figcaption className="mt-4 max-w-[262px] text-doc-small text-r-ink-3">
               Eight screens, a working consequence engine, no backend.
@@ -330,6 +368,7 @@ export default function SubmissionPage() {
       <Slide
         kicker="What I'd ship first"
         title="Two of the seven. The other five wait."
+        {...sec(12)}
         right={
           <div className="space-y-3" data-artifact>
             {[
@@ -387,6 +426,7 @@ export default function SubmissionPage() {
       <Slide
         kicker="Who's writing this"
         title="And what in here is real."
+        {...sec(13)}
         right={
           <dl className="divide-y divide-rule-2 border-y border-rule">
             <Fact term="The consequence engine is real">
@@ -402,10 +442,9 @@ export default function SubmissionPage() {
               Tagged on screen wherever it appears, in two registers: mocked but it
               exists today, and doesn&rsquo;t exist yet.
             </Fact>
-            <Fact term="Real-time turn-taking is the one I couldn't build">
-              Push-to-talk gives a rep unlimited think time. Fixing it needs
-              latency-aware turn-taking and barge-in, so I&rsquo;m naming it as a
-              requirement rather than pretending this demonstrates it.
+            <Fact term="Real-time turn-taking isn't demonstrated">
+              Push-to-talk gives a rep unlimited think time, and a clickable mock
+              can&rsquo;t fix that. Specified as part two of the first change.
             </Fact>
             <Fact term="What would change my mind">
               If reps who complete AI Coach already close at a materially higher
@@ -452,6 +491,8 @@ function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
     <Slide
       kicker={`What I built · ${n} of ${CHANGES.length}`}
       title={c.title}
+      // Changes are slides 7-11: two slides of "The fix" precede them.
+      {...sec(6 + n)}
       consequence={c.consequence}
       flip={desktop}
       right={
@@ -487,6 +528,14 @@ function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
         </span>
         {c.afterShort ?? c.after}
       </p>
+      {c.partTwo && (
+        <p className="mt-5 text-doc-body text-r-ink-2">
+          <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
+            and part two
+          </span>
+          {c.partTwo}
+        </p>
+      )}
       {(c.forTheRepShort ?? c.forTheRep) && (
         <p className="mt-5 text-doc-body text-r-ink-2">
           <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
