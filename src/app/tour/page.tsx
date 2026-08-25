@@ -124,7 +124,15 @@ export default function TourPage() {
         </div>
 
         <div className="min-w-0 flex-1 pb-16">
-          <AnimatePresence mode="wait">
+          {/* Fixed height, not shrink-to-fit. The five changes carry different
+              amounts of annotation — some have a `tryIt`, some a `caveat` — so in
+              normal flow the Back/Next row landed at a different y on every
+              change and the reader had to chase the button they'd just pressed.
+              Reserving the tallest change's height pins the controls without
+              taking them out of flow, so the stacked layout below 1100px still
+              scrolls normally. */}
+          <div className="min-[1100px]:min-h-[680px]">
+            <AnimatePresence mode="wait">
             <motion.div
               key={change.id}
               initial={{ opacity: 0, y: 8 }}
@@ -182,7 +190,8 @@ export default function TourPage() {
                 </p>
               )}
             </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
+          </div>
 
           <div className="mt-10 flex items-center gap-3 border-t border-rule pt-6">
             <button

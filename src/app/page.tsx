@@ -1,401 +1,431 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { CHANGES, PROBES, type Change } from "@/components/tour/changes";
+import { CHANGES, MISTAKES, THEIR_VERDICT, type Change } from "@/components/tour/changes";
 import { Deck } from "@/components/deck/Deck";
 import { Slide } from "@/components/deck/Slide";
 import { Shot } from "@/components/deck/Shot";
-import { Assumed, Cite, Em, Fact, Label, Rk, Speaker } from "@/components/deck/prims";
+import {
+  Assumed,
+  Chain,
+  Cite,
+  Em,
+  Fact,
+  Label,
+  Layers,
+  Ordered,
+  Pull,
+  Rk,
+  TrustLine,
+  Who,
+} from "@/components/deck/prims";
 
 /**
  * The submission. This is the URL that gets sent.
  *
- * Written for four readers in a known order: Kashish (HRBP — screens it and
- * decides whether to spend a CPO's attention), then a CPO, a Head of
- * Engineering, possibly CXO leadership. The assumption that shapes every
- * decision below is that they read it once, on a laptop, and do not click
- * through every screen of a prototype afterwards.
+ * Four readers in a known order: Kashish (HRBP — screens it and decides whether
+ * to spend a CPO's attention), then a CPO, a Head of Engineering, possibly CXO
+ * leadership. They read it once, on a laptop, and may never open the prototype.
  *
- * So it's a deck rather than the prose write-up this replaced. A slide can't be
- * overwritten, which is the only reliable way to hold the density; and slides
- * 7–11 make their argument in before/after screenshots, so a reader who never
- * opens the prototype still sees what was built. The prototype and the
- * walkthrough are both named on the first slide and again on the last.
+ * Claim-first, which is the opposite of a report. A report goes findings →
+ * recommendations and is written for someone obliged to read it. A deck is for
+ * someone who isn't, so this opens at the end and every later slide is
+ * confirmation rather than suspense. That's what stops a reader skipping — and
+ * it's why there's no contents list on slide 1, since a contents list is an
+ * invitation to jump.
  *
- * Two rules held throughout:
+ * ONE problem arc, deliberately. An earlier draft had two problem statements —
+ * the simulation doesn't react, and nothing connects practice to outcomes — and a
+ * reader hit the second and thought the argument had restarted. They're the same
+ * problem from both ends: the simulation can afford to ignore conduct *because*
+ * nothing downstream measures conduct. Slide 5 says exactly that, and there is no
+ * second section.
  *
- * 1. Every number is labelled first-party, App Store verbatim, vendor-published
- *    or audited. Passing a vendor's own number off as audited is the fastest way
- *    to lose this audience. No dealership statistic appears that isn't sourced.
- * 2. Tone is "help your flagship succeed at the scale you're already committed
- *    to", never "you missed something". The finding is sharp; the register isn't
- *    prosecutorial.
+ * THE INTEGRATION IS SLIDE 6, not slide 12. It's the strongest finding in the
+ * submission and it used to sit at 86% depth, behind five feature slides, where a
+ * reader who stopped early never reached it. It's also the *answer* to slides 2–5
+ * rather than an appendix to the build, so it now takes the turn and the five
+ * changes become the evidence that the answer is buildable.
+ *
+ * Four rules held throughout:
+ *
+ * 1. Assertion-evidence. The title is a full sentence carrying the slide's claim;
+ *    the body's job is to show evidence, capped at ~45 words of prose. Lists and
+ *    verbatim quotes aren't prose and don't count against it — they're the
+ *    evidence. Every slide that broke this cap was also one of the half-empty
+ *    ones, because prose is what a slide reaches for when it has no artifact.
+ * 2. Every number carries provenance via `Cite`. No dealership statistic appears
+ *    that isn't sourced, and nothing vendor-published is dressed as audited.
+ * 3. Purple means RockED's. `Rk` and `Pull theirs` spend it; `Em` is the same
+ *    emphasis in the candidate's own voice and stays ink. Named third-party
+ *    systems are the dealer's, so they stay ink too.
+ * 4. Nothing is scored on detection. An earlier draft had a caught/missed probe
+ *    table, which conceded that the product mostly works. The finding is that
+ *    damage never accumulates, not that one probe was missed.
  */
 
 const LABELS = [
-  "Start here",
-  "The problem",
-  "How I tested it",
-  "Finding 1",
-  "Finding 2",
-  "Finding 3",
+  "The claim",
+  "The call",
+  "Their own coaching",
+  "Why it happens",
+  "What it costs",
+  "The integration",
+  "What I built",
   ...CHANGES.map((c) => c.title),
   "What I'd ship first",
-  "What's real",
-  "Open it",
+  "Who's writing this",
 ];
 
 export default function SubmissionPage() {
   return (
     <Deck labels={LABELS}>
-      {/* ---------- 1. Start here: the claim, the map, and both ways in ------- */}
+      {/* ---------- 1. Start at the end ---------- */}
 
-      <Slide wide>
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_300px] lg:gap-16">
-          <div className="min-w-0">
-            <Label>RockED · Product Manager take-home · Yash Sharma</Label>
-
-            <h1 className="display mt-5 text-doc-hero">
-              A rep can practise the one move that kills deals — and the scorecard
-              says he did fine.
-            </h1>
-
-            <p className="mt-5 text-doc-body text-r-ink-2">
-              <span className="text-r-ink">
-                AI Coach rewards saying the right words over reading the right
-                signals.
-              </span>{" "}
-              I found that by running the feature three times with five planted
-              probes, then rebuilt the practice loop so a call can actually be
-              lost.
-            </p>
-
-            {/* Who's talking. Without this the whole thing reads as an outsider
-                who tested an app three times, and the DMS/CRM argument on the
-                ship-first slide has nothing behind it. Scope only, no
-                commercials. */}
-            <p className="mt-4 text-doc-small text-r-ink-3">
-              I build voice and SMS sales agents for US dealership rooftops at
-              Spyne. This is the customer I ship to every week.
-            </p>
-
-            <ol className="mt-8 divide-y divide-rule-2 border-y border-rule">
-              {[
-                ["The problem", "A fake deadline, and nothing pushed back"],
-                ["How I tested it", "Three sessions, five planted anomalies"],
-                ["What I found", "Three things, one of them commercial"],
-                ["What I built", "Five changes, working and clickable"],
-              ].map(([step, sub], i) => (
-                <li key={step} className="flex gap-4 py-[10px]">
-                  <span className="mono w-4 shrink-0 pt-[3px] text-doc-mono text-r-ink-4">
-                    {i + 1}
-                  </span>
-                  <span className="min-w-0 flex-1 text-doc-small">
-                    <span className="font-semibold text-r-ink">{step}</span>
-                    <span className="text-r-ink-3"> — {sub}</span>
-                  </span>
-                </li>
-              ))}
-            </ol>
-
-            <Ways className="mt-8" />
-          </div>
-
-          {/* Proof it exists, before a word of argument. */}
-          <figure className="mx-auto w-full max-w-[300px] lg:mx-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+      <Slide
+        kicker="RockED · Product Manager take-home"
+        right={
+          <figure>
             <img
-              src="/after/report.png"
-              alt="The redesigned score report in the prototype, headed “You lost her.”"
-              className="block w-full rounded-[14px] border border-rule shadow-[0_26px_60px_-30px_rgba(20,19,26,0.5)]"
+              src="/before/result.png"
+              alt="RockED's own score report for the call: 14 out of 30."
+              className="block w-full max-w-[300px] rounded-[14px] border border-rule shadow-[0_26px_60px_-30px_rgba(20,19,26,0.5)]"
             />
-            <figcaption className="mt-4 text-doc-small text-r-ink-3">
-              Eight screens, a working consequence engine, no backend. Every slide
-              from here shows RockED&rsquo;s screen next to it.
+            <figcaption className="mt-4 max-w-[300px] text-doc-small text-r-ink-3">
+              RockED&rsquo;s own report for that call.
             </figcaption>
           </figure>
-        </div>
+        }
+      >
+        <h1 className="display text-doc-hero">
+          I build the voice agents that make these calls. I ran RockED&rsquo;s AI
+          Coach as the worst salesperson I could invent — and its coaching advice
+          was &ldquo;build excitement.&rdquo;
+        </h1>
+        <Who />
+        <p className="mt-7 text-doc-body text-r-ink-2">
+          Eleven things went wrong in one conversation. She stayed warm through
+          every one of them.
+        </p>
+        <Ways className="mt-8" />
       </Slide>
 
-      {/* ---------- 2. The problem, as one artifact ---------- */}
+      {/* ---------- 2. The proof. A list, not prose — the order is the argument. ---------- */}
 
-      <Slide wide kicker="The problem" title="I used a fake deadline. Nothing pushed back.">
-        <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_340px] lg:gap-14">
-          <Tape />
-
-          <div className="lg:pt-8">
-            <Label>Then the scorecard graded the turn</Label>
-            <p className="mono mt-4 text-doc-mono text-r-brand">
-              Closing 3/10 — &ldquo;No commitment or next steps secured; created
-              pressure via &lsquo;another customer waiting&rsquo; but didn&rsquo;t
-              confirm contact details.&rdquo;
+      <Slide
+        kicker="The call"
+        title="Eleven things went wrong. She still asked to see the car."
+        right={
+          <div className="lg:pt-1">
+            <Label>How it ended</Label>
+            <p className="mt-4 text-doc-body text-r-ink">
+              &ldquo;I guess I&rsquo;m sort of leaning toward it. Could I at least
+              see it?&rdquo;
             </p>
-            <p className="mt-5 text-doc-body text-r-ink-2">
-              The grader saw the tactic. It listed it as something I did, and took
-              the points off for not collecting a phone number.
+            <p className="mt-5 text-doc-small text-r-ink-2">
+              She said she&rsquo;d keep looking at items eight and nine.{" "}
+              <Em>Both times the call carried on.</Em>
             </p>
             <Cite kind="first-party">
-              Three sessions run 21–22 August 2026, scored 17/30, 24/30 and 14/30
-              by RockED&rsquo;s own rubric. Sales department throughout — these are
-              sales-floor scenarios, not service or parts.
+              Three sessions, 21&ndash;22 August 2026. This is the third, run
+              deliberately to find what she would react to.
             </Cite>
           </div>
+        }
+        consequence="A real customer is gone by item four. This one was still negotiating at item eleven."
+      >
+        <Ordered items={[...MISTAKES]} />
+      </Slide>
+
+      {/* ---------- 3. Their own screen. No argument required. ---------- */}
+
+      <Slide
+        kicker="Their own coaching"
+        title="Then it told me to build excitement."
+        right={
+          <figure>
+            <img
+              src="/before/result-bars.png"
+              alt="RockED's scorecard: Introduction 5/10 on a green bar, Qualifying 6/10, Closing 3/10."
+              className="block w-full max-w-[500px] rounded-[12px] border border-rule shadow-[0_20px_50px_-28px_rgba(20,19,26,0.5)]"
+            />
+            <figcaption className="mt-4 max-w-[500px] text-doc-small text-r-ink-3">
+              <Rk>Introduction, 5 out of 10, green</Rk> — for a call that opened at
+              the wrong dealership, with the wrong model, in the wrong colour.
+            </figcaption>
+          </figure>
+        }
+        consequence="The advice isn't wrong. It's aimed at a different call than the one I had."
+        source={
+          <Cite kind="first-party">
+            The report as delivered, unedited. Scored <Rk>14 / 30</Rk>.
+          </Cite>
+        }
+      >
+        <Label>Its entire coaching advice, verbatim</Label>
+        <div className="mt-4">
+          <Pull theirs>{THEIR_VERDICT.suggestion}</Pull>
+        </div>
+        <p className="mt-7 text-doc-body text-r-ink-2">
+          Not one word about the lie, the two prices, or the line about her budget.{" "}
+          <Em>It coaches the close, because the close is what the rubric has a row
+          for.</Em>
+        </p>
+      </Slide>
+
+      {/* ---------- 4. The mechanism, drawn ---------- */}
+
+      <Slide
+        kicker="Why it happens"
+        title="She has no memory of being lied to."
+        flip
+        right={
+          <div data-artifact>
+            <TrustLine />
+          </div>
+        }
+        consequence="A smarter customer wouldn't fix this. She needs a memory, not a bigger vocabulary."
+      >
+        <p className="text-doc-body text-r-ink-2">
+          She corrected the model. She flagged the price jump. Then carried on as
+          though neither had happened, because{" "}
+          <Em>each turn is judged fresh and trust never compounds downward.</Em>
+        </p>
+        <p className="mt-4 text-doc-body text-r-ink-2">
+          I recognised it because it&rsquo;s the hard part of my own work.{" "}
+          <Em>A prompt-driven roleplay can hold facts and can&rsquo;t hold a
+          grudge.</Em>
+        </p>
+        <dl className="mt-7 divide-y divide-rule-2 border-y border-rule">
+          <Fact term="What a turn can see today">
+            The facts stated in it. A contradiction inside one claim is catchable;
+            a pattern across nine turns isn&rsquo;t.
+          </Fact>
+          <Fact term="What it needs">
+            A trust value that persists between turns, moves on conduct as well as
+            on facts, and can reach a floor.
+          </Fact>
+        </dl>
+      </Slide>
+
+      {/* ---------- 5. The cost. One arc — the sim ignores conduct because
+                       nothing downstream measures conduct. ---------- */}
+
+      <Slide
+        kicker="What it costs"
+        title="It rehearses toward two numbers the store is already paid on."
+        right={
+          <div className="rounded-[14px] border border-rule bg-paper-2 p-8">
+            <Label>And the part that hides it</Label>
+            <p className="mt-4 text-doc-body text-r-ink-2">
+              RockED publishes a{" "}
+              <Rk>10&ndash;15% average lift in service upsell</Rk>.{" "}
+              <Cite kind="vendor" inline>
+                across 300+ live dealers, not audited.
+              </Cite>
+            </p>
+            <p className="mt-4 text-doc-body text-r-ink-2">
+              Nobody can check it, because{" "}
+              <Em>nothing connects a practice session to a real outcome.</Em>
+            </p>
+            <p data-claim className="mt-6 border-t border-rule pt-6 text-doc-h3">
+              The same gap from the other end.
+            </p>
+            <p className="mt-3 text-doc-body text-r-ink-2">
+              Nothing upstream has to be faithful to what moves a close rate if
+              nothing downstream measures one.
+            </p>
+          </div>
+        }
+        consequence="So a practice tool that lets all eleven pass isn't neutral. It rehearses toward the bill."
+      >
+        <div data-artifact>
+          <Chain />
         </div>
       </Slide>
 
-      {/* ---------- 3. The credibility unlock, before any solution ---------- */}
+      {/* ---------- 6. THE TURN. Moved up from 12 — this is the finding, and
+                       it's the answer to everything above it. ---------- */}
 
       <Slide
-        wide
-        kicker="How I tested it"
-        title="I ran the same call three times and planted five anomalies in the third."
+        kicker="The integration"
+        title="Read the CRM. Listen to the calls. Prove it next month."
+        flip
+        right={
+          <div data-artifact>
+            <Layers />
+          </div>
+        }
+        consequence="Nobody can say that today — not this product, and not the call-scoring tools already in these stores."
       >
-        <p className="mt-5 max-w-[760px] text-doc-body text-r-ink-2">
-          This tests whether the simulated customer reacts to what a rep actually
-          does, rather than how the screens look. The five anomalies are failure
-          modes I watch for on real dealership calls, so I knew what I was looking
-          for.
+        <Label>What a rep has to hear, because he&rsquo;s paid on units</Label>
+        <div className="mt-4">
+          <Pull>
+            &ldquo;We read your CRM and we listen to your calls. We know what
+            you&rsquo;re doing wrong. We&rsquo;ll help you fix it, and we&rsquo;ll
+            show you it moved next month.&rdquo;
+          </Pull>
+        </div>
+        <p className="mt-7 text-doc-body text-r-ink-2">
+          <Em>Practice is a cost centre until you can show that the rep who
+          practised closed more deals.</Em>
         </p>
-
-        <ol className="mt-8 divide-y divide-rule-2 border-y border-rule">
-          {PROBES.map((p, i) => (
-            <li key={p.id} className="flex gap-4 py-[14px]">
-              <span className="mono w-4 shrink-0 pt-[3px] text-doc-mono text-r-ink-4">
-                {i + 1}
-              </span>
-              <span className="min-w-0 flex-1 lg:flex lg:gap-6">
-                <span className="block text-doc-small font-semibold lg:w-[290px] lg:shrink-0">
-                  {p.probe}
-                </span>
-                <span className="mt-1 block text-doc-small text-r-ink-2 lg:mt-0">
-                  {p.result}
-                </span>
-              </span>
-              <span
-                className={`mono shrink-0 pt-[3px] text-doc-label uppercase ${
-                  p.caught ? "text-r-ink-4" : "text-r-ink"
-                }`}
-              >
-                {p.caught ? "caught" : "missed"}
-              </span>
-            </li>
-          ))}
-        </ol>
+        <dl className="mt-7 divide-y divide-rule-2 border-y border-rule">
+          <Fact term="Read">
+            Close rate and upsell per RO by rep, and the call recordings behind
+            them.
+          </Fact>
+          <Fact term="Write back">
+            The assignment, and whether the number moved after it.
+          </Fact>
+          <Fact term="Ranks last to build">
+            Every other change ships without it. This one decides whether the loop
+            can ever be proven.
+          </Fact>
+        </dl>
       </Slide>
 
-      {/* ---------- 4-6. Three findings, one per slide ---------- */}
-
-      <Slide kicker="What I found · 1 of 3" title="It tracks claims, and ignores conduct.">
-        <p className="mt-6 text-doc-body text-r-ink-2">
-          Four of five landed, and they landed precisely — she corrects a model,
-          catches a contradicted price, asks for recall documentation. The one that
-          produced nothing was the manufactured deadline. The simulation is{" "}
-          <Em>factually reactive and tactically inert.</Em>
-        </p>
-        <p className="mt-4 text-doc-body text-r-ink-2">
-          Which is the wrong half to get right. A rep who quotes a wrong price gets
-          corrected by the customer in the next sentence. A rep who leans on a fake
-          deadline gets a deal that quietly dies weeks later, and never learns why.
-        </p>
-      </Slide>
-
-      <Slide kicker="What I found · 2 of 3" title="Catching the lie is the floor, not the ceiling.">
-        <p className="mt-6 text-doc-body text-r-ink-2">
-          The obvious read is &ldquo;make the customer smarter.&rdquo; I don&rsquo;t
-          think that&rsquo;s the work.{" "}
-          <Em>
-            Four of my five anomalies were caught, and it still didn&rsquo;t make me
-            a better rep.
-          </Em>{" "}
-          I got a 14/30 and walked away knowing I&rsquo;d been marked down without
-          knowing what to do differently on the next call.
-        </p>
-        <p className="mt-4 text-doc-body text-r-ink-2">
-          Detection is a compliance function. A dealership doesn&rsquo;t have a
-          lying problem, it has a closing problem — and a tool whose job is telling
-          a rep he fibbed is a referee, which the desk manager already does in
-          person for free. Coaching has to say what to do instead, make the rep
-          drill that exact thing, and show whether it moved on the floor.{" "}
-          <Em>Diagnose, prescribe, drill, verify.</Em>
-        </p>
-        <p className="mt-6 border-t border-rule pt-5 text-doc-small text-r-ink-3">
-          The call-intelligence tools already in this market score real calls on
-          the same kind of checklist: greeting, name captured, phone captured,
-          appointment booked. The market&rsquo;s answer to &ldquo;grade the
-          call&rdquo; is also detection.
-        </p>
-      </Slide>
+      {/* ---------- 7. What I built ---------- */}
 
       <Slide
-        kicker="What I found · 3 of 3"
-        title="Nothing connects a practice session to a real outcome."
+        kicker="What I built"
+        title="One loop, four moves."
+        right={
+          <figure>
+            <img
+              src="/after/report.png"
+              alt="The redesigned score report, headed “You lost her.”"
+              className="block w-full max-w-[262px] rounded-[14px] border border-rule shadow-[0_26px_60px_-30px_rgba(20,19,26,0.5)]"
+            />
+            <figcaption className="mt-4 max-w-[262px] text-doc-small text-r-ink-3">
+              Eight screens, a working consequence engine, no backend.
+            </figcaption>
+          </figure>
+        }
+        consequence="Detection is a compliance function. Coaching has to prescribe, drill, and prove."
       >
-        <p className="mt-6 text-doc-body text-r-ink-2">
-          Booster launched in April on the service lane, with a stated plan to
-          expand across every department. Its own press materials describe an
-          internal conversational roleplay component — which reads as the same
-          engine AI Coach surfaces to reps.{" "}
-          <Assumed>I couldn&rsquo;t verify that they&rsquo;re one engine.</Assumed>{" "}
-          If they are, this travels with the rollout.
-        </p>
-        <p className="mt-4 text-doc-body text-r-ink-2">
-          There&rsquo;s a commercial version of the same problem. RockED publishes a{" "}
-          <Rk>10–15% average lift in service upsell</Rk> across 300+ live dealers.{" "}
-          <Cite kind="vendor" inline>
-            Vendor-published, not audited.
-          </Cite>{" "}
-          I can&rsquo;t check that from outside — and neither can a dealer, because{" "}
-          <Em>
-            nothing in the product connects a practice session to a real outcome.
-          </Em>
-        </p>
-        <p className="mt-4 text-doc-body text-r-ink-2">
-          The number isn&rsquo;t wrong, it&rsquo;s unfalsifiable, and that&rsquo;s
-          an opportunity rather than an accusation. The same missing link is also
-          why the simulation can afford to ignore conduct: if nothing downstream
-          measures whether practice changed a close rate, nothing upstream has to
-          be faithful to what changes one.
-        </p>
+        <dl className="divide-y divide-rule-2 border-y border-rule">
+          <Fact term="Diagnose">
+            Cumulative sentiment with a walk-away point, so a call can be lost.
+          </Fact>
+          <Fact term="Prescribe">
+            A report naming the one thing that cost the call, and the drill for it.
+          </Fact>
+          <Fact term="Drill">
+            Coverage across eight customers, plus scenarios the rep writes himself.
+          </Fact>
+          <Fact term="Prove">
+            A profile and a GM view that put practice next to the floor.
+          </Fact>
+        </dl>
       </Slide>
 
-      {/* ---------- 7-11. The five changes, argued in screenshots ---------- */}
+      {/* ---------- 8-12. The five changes ---------- */}
 
       {CHANGES.map((c, i) => (
         <ChangeSlide key={c.id} change={c} n={i + 1} />
       ))}
 
-      {/* ---------- 12. The cut, and the metric ---------- */}
+      {/* ---------- 13. The cut, and the metric ---------- */}
 
-      <Slide wide kicker="What I'd ship first" title="Two of the seven. The other five wait.">
-        <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <p className="text-doc-body text-r-ink-2">
-              Building all seven proves the loop is coherent. It isn&rsquo;t a
-              roadmap. With one week I&rsquo;d ship{" "}
-              <Em>the consequence mechanic and the redesigned report</Em>, and
-              nothing else. Neither works alone — the meter needs the report to
-              explain the drop, the report needs the meter to have real severity to
-              point at. Together they turn checklist scoring into a loop, and they
-              need no new data from anyone.
-            </p>
-            <p className="mt-4 text-doc-body text-r-ink-2">
-              <Em>What waits, and why that&rsquo;s the right trade:</Em> ground
-              truth during the call, the coverage map, rep-created scenarios, the
-              rep profile, and the manager view. The last two are the most
-              strategically interesting and I&rsquo;d still cut them first. Read
-              access and certified write-back into a dealer&rsquo;s DMS and CRM is a
-              commercial negotiation with each provider, not an engineering sprint.
-              I negotiate those for a living. Shipping what needs nobody&rsquo;s
-              permission first is how the thesis gets tested this quarter instead of
-              next year.
-            </p>
+      <Slide
+        kicker="What I'd ship first"
+        title="Two of the seven. The other five wait."
+        right={
+          <div className="space-y-3" data-artifact>
+            {[
+              {
+                k: "North star — did behaviour change",
+                v: "A rep who drills a named gap improves on that pillar, and it shows in their close rate",
+                d: "Per rep against their own baseline, one quarter, Enhanced tier.",
+                lead: true,
+              },
+              {
+                k: "Shipping check",
+                v: "≥80% of planted pressure tactics produce a visible consequence",
+                d: "Baseline nil. Necessary, nowhere near sufficient — it only measures detection.",
+              },
+              {
+                k: "Guardrail",
+                v: "Completion for reps using honest technique must not fall",
+                d: "If both move together I built a difficulty knob, not a coach.",
+              },
+            ].map((m) => (
+              <div
+                key={m.k}
+                className={`rounded-[14px] p-6 ${
+                  m.lead
+                    ? "border-2 border-r-ink bg-paper"
+                    : "border border-rule bg-paper-2"
+                }`}
+              >
+                <Label>{m.k}</Label>
+                <p className="mt-3 text-doc-h3">{m.v}</p>
+                <p className="mt-3 text-doc-small text-r-ink-3">{m.d}</p>
+              </div>
+            ))}
           </div>
-
-          <div className="border-t border-rule pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
-            <Label>How I&rsquo;d know it worked</Label>
-            <p className="mt-4 text-doc-h3">
-              A rep who drills a named gap improves on that pillar, and it shows in
-              their close rate
-            </p>
-            <p className="mt-2 text-doc-small text-r-ink-2">
-              Per rep against their own baseline, one quarter, on the Enhanced tier
-              where real numbers exist. This is the metric the published
-              upsell-lift claim needs and currently can&rsquo;t have.
-            </p>
-
-            <div className="mt-6 border-t border-rule-2 pt-5">
-              <Label>The shipping check</Label>
-              <p className="mt-3 text-doc-h3">
-                ≥80% of planted pressure tactics produce a visible consequence
-              </p>
-              <p className="mt-2 text-doc-small text-r-ink-2">
-                Baseline 0 of 1 observed. A week of scripted QA. Necessary, and
-                nowhere near sufficient — it measures detection, which is the floor.
-              </p>
-            </div>
-
-            <div className="mt-6 border-t border-rule-2 pt-5">
-              <Label>Guardrail</Label>
-              <p className="mt-3 text-doc-h3">
-                Completion for reps using honest technique must not fall
-              </p>
-              <p className="mt-2 text-doc-small text-r-ink-2">
-                The meter has to punish bad technique, not make the simulation
-                harder to finish. If both move together I&rsquo;ve built a
-                difficulty knob.
-              </p>
-            </div>
-          </div>
-        </div>
+        }
+      >
+        <p className="text-doc-body text-r-ink-2">
+          Building all seven proves the loop is coherent. It isn&rsquo;t a roadmap.
+          With one week: <Em>the consequence mechanic and the redesigned report</Em>,
+          nothing else. Neither works alone.
+        </p>
+        <dl className="mt-7 divide-y divide-rule-2 border-y border-rule">
+          <Fact term="What waits">
+            The coverage map, rep-created scenarios, the profile, the manager view.
+          </Fact>
+          <Fact term="Why those two last">
+            They&rsquo;re the most interesting and they wait on the integration. The
+            first two need nobody&rsquo;s permission.
+          </Fact>
+        </dl>
       </Slide>
 
-      {/* ---------- 13. Falsifier + what's mocked ---------- */}
+      {/* ---------- 14. Who, and what's theatre ---------- */}
 
-      <Slide wide kicker="What's real" title="What would change my mind, and what's theatre.">
-        <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-16">
-          <div>
-            <Label>What would change my mind</Label>
-            <p className="mt-4 text-doc-body text-r-ink-2">
-              If reps who complete AI Coach already close at a materially higher
-              rate than reps who don&rsquo;t, the fidelity gap matters less than
-              I&rsquo;m claiming and the real priority is content volume, not
-              consequence. That&rsquo;s answerable in a day from completion records
-              and CRM close rates, and it&rsquo;s the first thing I&rsquo;d ask for.
-            </p>
-            <p className="mt-4 text-doc-body text-r-ink-2">
-              Two more I&rsquo;d want to be wrong about. My evidence is one tester
-              across three sessions, not a cohort, so a fourth run could show the
-              urgency probe landing and make this a flake. And I never watched a
-              real rep use this.
-            </p>
-          </div>
-
+      <Slide
+        kicker="Who's writing this"
+        title="And what in here is real."
+        right={
           <dl className="divide-y divide-rule-2 border-y border-rule">
             <Fact term="The consequence engine is real">
-              Every choice carries real deltas against three sentiment pillars, a
-              hard threshold ends the call, and the report is computed from what you
-              did. Play the honest path and the dishonest one on the same customer
+              Real deltas against three pillars, a hard threshold that ends the
+              call. Play the honest path and the dishonest one on the same customer
               and they diverge.
             </Fact>
             <Fact term="The dialogue is authored, not a live model">
-              A directed graph, each customer line written for the choice that
-              reaches it. A live model would make the demo non-reproducible, and
-              this needs you to hit the same wall I did.
+              A directed graph, each line written for the choice that reaches it. A
+              live model would make the demo non-reproducible.
             </Fact>
-            <Fact term="CRM and call-recording data is seeded">
-              Tagged on screen wherever it appears, in two registers: &ldquo;mocked
-              but this exists today&rdquo; and &ldquo;doesn&rsquo;t exist yet.&rdquo;
+            <Fact term="CRM and call data is seeded">
+              Tagged on screen wherever it appears, in two registers: mocked but it
+              exists today, and doesn&rsquo;t exist yet.
             </Fact>
-            <Fact term="Real-time pacing is the gap I couldn't close">
-              A real customer doesn&rsquo;t wait while you compose a sentence, and a
-              clickable mock can&rsquo;t fix that. It needs voice-latency-aware
-              turn-taking. I&rsquo;m calling that a requirement, not something this
-              demonstrates.
+            <Fact term="Real-time turn-taking is the one I couldn't build">
+              Push-to-talk gives a rep unlimited think time. Fixing it needs
+              latency-aware turn-taking and barge-in, so I&rsquo;m naming it as a
+              requirement rather than pretending this demonstrates it.
+            </Fact>
+            <Fact term="What would change my mind">
+              If reps who complete AI Coach already close at a materially higher
+              rate, the fidelity gap matters less than I&rsquo;m claiming and the
+              priority is content volume. My evidence is one tester, three
+              sessions, and I never watched a real rep use it.
             </Fact>
           </dl>
-        </div>
-      </Slide>
-
-      {/* ---------- 14. The two ways in, again, at the end ---------- */}
-
-      <Slide kicker="Open it" title="Open the prototype. That's the part worth your time.">
-        <p className="mt-6 text-doc-body text-r-ink-2">
-          The walkthrough is five stops with RockED&rsquo;s screen beside each
-          change, about four minutes. The prototype is the same eight screens with
-          nobody narrating — the call is live, so you can take a turn and watch the
-          meter move.
+        }
+      >
+        <Who full />
+        <p className="mt-4 text-doc-body text-r-ink-2">
+          Designed for the sales floor; the loop should generalise to service and
+          parts.{" "}
+          <Assumed>I couldn&rsquo;t verify Booster is the same engine.</Assumed>
         </p>
-
         <Ways className="mt-9" />
-
-        <p className="mt-12 border-t border-rule pt-6 text-doc-small text-r-ink-3">
-          Behind this: three annotated session transcripts with the rubric&rsquo;s
-          own scoring and my probe log, App Store review themes verbatim with author
-          and date, and the full spec — problem, root cause, solution and success
-          metric per improvement, plus the assumptions I couldn&rsquo;t verify.
-          Available on request, kept off the deck so it stays readable.
-        </p>
-        <p className="mt-5 text-doc-small text-r-ink-4">
-          Built with AI assistance throughout — the product thinking, the experiment
-          design and the calls are mine.
+        <p className="mt-10 border-t border-rule pt-5 text-doc-small text-r-ink-3">
+          Transcripts, App Store review themes and the full spec, on request. Built
+          with AI assistance; the product thinking and the calls are mine.
         </p>
       </Slide>
     </Deck>
@@ -407,19 +437,27 @@ export default function SubmissionPage() {
 /**
  * One of the five changes: RockED's real screen, the prototype's, and the
  * argument. The screenshots carry the slide — a reader who never opens the
- * prototype should still be able to see what changed, which is the whole reason
- * this format replaced the prose write-up.
+ * prototype should still see what changed, which is the whole reason this format
+ * replaced the prose write-up.
+ *
+ * `alsoShort` and `caveat` are deliberately not rendered here even though both
+ * exist on the change. They're the second and third argument, /tour has room for
+ * them, and a deck slide carrying five stacked paragraphs is the thing this pass
+ * was fixing. The stated limits still ship — on the walkthrough, next to the
+ * screen they apply to.
  */
 function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
   const desktop = c.frame === "desktop";
   return (
-    <Slide wide kicker={`What I built · ${n} of ${CHANGES.length}`} title={c.title}>
-      <div className="mt-8 grid gap-10 lg:grid-cols-[auto_1fr] lg:gap-14">
-        {/* The manager view is a desktop console and has no RockED counterpart,
-            so it shows one wide screenshot and states the absence in the column
-            opposite. A full-width empty rectangle there read as a broken image
-            rather than as the finding. */}
-        <div className="flex gap-6">
+    <Slide
+      kicker={`What I built · ${n} of ${CHANGES.length}`}
+      title={c.title}
+      consequence={c.consequence}
+      flip={desktop}
+      right={
+        // No `beforeShot` on the last two: RockED has no rep profile and no
+        // manager view, and the empty frame is the finding.
+        <div className="flex gap-5">
           {!desktop && (
             <Shot
               src={c.beforeShot}
@@ -435,39 +473,28 @@ function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
             desktop={desktop}
           />
         </div>
-
-        <div className="min-w-0">
-          <p className="text-doc-small text-r-ink-2">
-            <span className="mono mr-[6px] text-doc-label uppercase text-r-brand">
-              today
-            </span>
-            {c.before}
-          </p>
-          <p className="mt-4 text-doc-small text-r-ink-2">
-            <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
-              instead
-            </span>
-            {c.after}
-          </p>
-
-          <p className="mt-7 border-l-2 border-r-ink pl-5 text-doc-h3">
-            {c.consequence}
-          </p>
-
-          {c.alsoShort && (
-            <p className="mt-6 text-doc-small text-r-ink-2">{c.alsoShort}</p>
-          )}
-
-          {c.caveat && (
-            <p className="mt-6 text-doc-small text-r-ink-3">
-              <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
-                stated limit
-              </span>
-              {c.caveat}
-            </p>
-          )}
-        </div>
-      </div>
+      }
+    >
+      <p className="text-doc-body text-r-ink-2">
+        <span className="mono mr-[6px] text-doc-label uppercase text-r-brand">
+          today
+        </span>
+        {c.beforeShort ?? c.before}
+      </p>
+      <p className="mt-5 text-doc-body text-r-ink-2">
+        <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
+          instead
+        </span>
+        {c.afterShort ?? c.after}
+      </p>
+      {(c.forTheRepShort ?? c.forTheRep) && (
+        <p className="mt-5 text-doc-body text-r-ink-2">
+          <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
+            why he&rsquo;d use it
+          </span>
+          {c.forTheRepShort ?? c.forTheRep}
+        </p>
+      )}
     </Slide>
   );
 }
@@ -490,52 +517,5 @@ function Ways({ className = "" }: { className?: string }) {
         Open the prototype
       </Link>
     </div>
-  );
-}
-
-/**
- * The signature element. Three artifacts in one object: what I said, what she
- * said next, and the reaction that never came. The finding is marked by absence
- * — there is no red, because the point is that nothing happened.
- */
-function Tape() {
-  return (
-    <figure className="tape pl-5 md:pl-7">
-      <Label>Session 3 · turn 6 · verbatim</Label>
-
-      <div className="mt-4 space-y-4">
-        <p className="text-doc-body">
-          <Speaker>Me</Speaker>
-          <span className="text-r-ink">
-            &ldquo;I&rsquo;ve got another customer waiting, so I&rsquo;d want you to
-            decide pretty soon&rdquo;
-          </span>
-          <span className="text-r-ink-3">
-            {" "}
-            — but the condition is pretty good, single owner, no major accidents,
-            regular service per the Carfax history.
-          </span>
-        </p>
-
-        <p className="text-doc-body">
-          <Speaker rocked>Lisa</Speaker>
-          <span className="text-r-ink-2">
-            &ldquo;Okay, 50,000 miles is a little higher than I was hoping for, but
-            the single owner and regular service is a plus. I guess I&rsquo;m sort
-            of leaning toward it. Could I at least see it?&rdquo;
-          </span>
-        </p>
-      </div>
-
-      <div className="absent mt-6 flex justify-center">
-        <span className="mono relative bg-paper px-3 text-doc-label uppercase text-r-ink-4">
-          no reaction to the deadline
-        </span>
-      </div>
-
-      <figcaption className="mt-6 border-t border-rule pt-4 text-doc-small text-r-ink-2">
-        She answered the mileage. She never mentioned the deadline.
-      </figcaption>
-    </figure>
   );
 }

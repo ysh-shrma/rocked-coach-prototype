@@ -14,9 +14,11 @@
  * dimensions per shot for no benefit here.
  */
 
-/** One number, so the two sides of a pair can never drift out of alignment. */
-const PHONE_H = 420;
-const DESKTOP_H = 400;
+/** One number, so the two sides of a pair can never drift out of alignment.
+ *  Sized to fill the slide frame: at 420 the change slides sat at 61% vertical
+ *  fill on a 1000px viewport, which read as an unfinished slide. */
+const PHONE_H = 470;
+const DESKTOP_H = 520;
 
 export function Shot({
   src,

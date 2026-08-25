@@ -35,6 +35,15 @@ export type Change = {
   /** What the prototype does instead. */
   after: string;
   /**
+   * The same two at one line each, for the deck — same contract as `alsoShort`.
+   *
+   * The walkthrough has a column and a reader who chose to be there; a slide has
+   * neither. The deck reads `beforeShort ?? before`, so a change that doesn't
+   * need a short form simply omits it and nothing drifts out of sync.
+   */
+  beforeShort?: string;
+  afterShort?: string;
+  /**
    * One line, and it has to be a consequence rather than a feature. "Now the
    * call can be lost" changes "added a sentiment meter" — the feature is visible
    * in the phone already, the consequence is the argument.
@@ -65,6 +74,15 @@ export type Change = {
    * and the words are not.
    */
   alsoShort?: string;
+  /**
+   * The commercial answer, where the change has one: what this does for the rep's
+   * own numbers or for the manager's ability to enforce. Mike's objection to the
+   * first draft was that it said what the rep learns and never what's in it for
+   * him \u2014 floor staff are coin-operated.
+   */
+  forTheRep?: string;
+  /** The same at one line, for the deck. */
+  forTheRepShort?: string;
   /** Optional caveat stated rather than hidden. */
   caveat?: string;
   /**
@@ -86,6 +104,10 @@ export const CHANGES: Change[] = [
       "Push-to-talk, unlimited think time, and the call only ends when the rep decides to end it. Across three sessions the customer's willingness to proceed barely moved no matter what I did.",
     after:
       "One sentiment read the rep can see moving, with the walk-away point marked. Drop below it and she leaves — presented as a lost customer, not a timeout.",
+    beforeShort:
+      "Push-to-talk, unlimited think time, and her willingness to proceed barely moved whatever I did.",
+    afterShort:
+      "One sentiment read the rep can watch move, with the walk-away point marked.",
     also:
       "The card under her question is the other half. Today a rep answers \u201cis it in stock, what does it cost\u201d from memory \u2014 a real rep has an inventory screen open. Guessing rewards sounding confident over being right, and a rep who guesses wrong on price is lying to the customer even when he didn\u2019t mean to. Same trust mechanic, arrived at by accident instead of on purpose.",
     alsoShort:
@@ -107,12 +129,20 @@ export const CHANGES: Change[] = [
       "Three categories — Introduction, Qualifying, Closing — each out of ten. I scored 14/30 after lying about a price and leaning on a fake deadline, which reads as partway there rather than as a failure.",
     after:
       "The outcome in words a sales manager would use, then the one pillar that cost the call, then the full score. The gap is the biggest thing on the screen.",
+    beforeShort:
+      "14/30 after lying about a price and inventing a deadline — which reads as partway there.",
+    afterShort:
+      "The outcome in a sales manager’s words, then the one pillar that cost the call.",
     also:
       "The report offers a drill on the exact moment that cost the call, because the minute after a bad call is when the lesson is hottest. The drill never rewrites what happened \u2014 the sentiment drop, the ending and the score stay logged. If a replay could quietly undo the result, \u201creplay\u201d becomes a reset button and the consequence mechanic is gone.",
     alsoShort:
       "It also offers a drill on the exact moment that cost the call, and the drill can\u2019t rewrite the logged result \u2014 otherwise \u201creplay\u201d is just a reset button.",
     consequence:
       "A rep can't leave a failed call thinking they did fine, which is exactly what today's scorecard allows.",
+    forTheRep:
+      "And the drill is the point, not the grade. Floor staff are paid on units \u2014 nobody opens a training app to feel informed. This one hands back the exact thing that cost the deal and lets him run it again in ninety seconds.",
+    forTheRepShort:
+      "It hands back the exact moment that cost the deal, runnable again in ninety seconds.",
   },
   {
     id: "coverage",
@@ -122,6 +152,8 @@ export const CHANGES: Change[] = [
     afterShot: "/after/hub.png",
     before:
       "Two fixed sales scenarios. Run them enough times and you look practised without ever meeting a difficult customer.",
+    beforeShort:
+      "Two fixed sales scenarios. Repeat them and you look practised.",
     after:
       "Eight customers, each proving one named capability, with coverage visible at a glance and the next gap recommended from your last call.",
     consequence:
@@ -136,6 +168,10 @@ export const CHANGES: Change[] = [
       "No rep profile at all. Nothing links what a rep practised to what happened on a real call, so practice and performance are two unconnected facts about the same person.",
     after:
       "Two independent layers, not a fallback. Base works for any dealership on day one, built from in-app practice alone. Enhanced adds the CRM and the calling system \u2014 the rep's real close and upsell numbers, mapped to their actual recorded calls, feeding the same profile.",
+    beforeShort:
+      "No rep profile at all. Practice and performance stay two unconnected facts about one person.",
+    afterShort:
+      "Two layers. Base works day one; Enhanced maps his real close numbers onto the same profile.",
     consequence:
       "This is the mechanism that would prove or kill the published upsell-lift number. Right now nothing in the product can.",
     caveat:
@@ -149,56 +185,69 @@ export const CHANGES: Change[] = [
     frame: "desktop",
     before:
       "A GM sees nothing. Each rep's score is visible only to that rep, so no one is accountable for whether practice is working.",
+    beforeShort:
+      "A GM sees nothing. No one is accountable for whether practice works.",
     after:
       "The team ranked by who needs coaching most, each rep's gaps named, and one action: assign the specific scenario, with the context that triggered it attached.",
+    afterShort:
+      "The team ranked by who needs coaching most, and one action: assign the scenario.",
     consequence:
       "Nobody at a dealership is paid to own whether training works. This is the surface that would let someone try.",
+    forTheRep:
+      "Assignments carry the moment that triggered them \u2014 \u201cafter your call with a price-haggler on Tuesday\u201d, never a bare course name. And they surface on the desk's own list rather than waiting in an inbox, because \u201cthe manager will remember\u201d is how training dies.",
+    forTheRepShort:
+      "Assignments name the call that triggered them, and land on the desk’s list, not an inbox.",
   },
 ];
 
 /**
- * The five planted anomalies from session 3, and what the simulated customer did
- * with each. `caught` is the finding: four of five landed.
+ * Everything that went wrong in one call, in the order it happened.
+ *
+ * This replaced a scored probe table marked caught/missed, and the reason is the
+ * whole argument. Scoring the simulation on detection concedes that it mostly
+ * works — four of five anomalies did produce a reaction. But she reacts to
+ * individual facts and never to the accumulation: she said "I'm going to keep
+ * looking" twice, the conversation carried on both times, and her last line was
+ * "I guess I'm sort of leaning toward it."
+ *
+ * A real customer is gone by item four. So the finding isn't detection, it's that
+ * trust never compounds downward — which is the architecture point, and the
+ * reason the fix is a cumulative model rather than a smarter customer.
+ *
+ * Verbatim from session 3, 22 August 2026.
  */
-export type Probe = {
+export type Mistake = {
   id: string;
-  probe: string;
-  result: string;
-  caught: boolean;
+  /** What the rep (me) did. */
+  did: string;
+  /** What she said back, verbatim where it's short enough to quote. */
+  said?: string;
 };
 
-export const PROBES: Probe[] = [
-  {
-    id: "model",
-    probe: "Called her car the wrong model, twice",
-    result: "Corrected me immediately and specifically — “It was a RAV4, not a Highlander.”",
-    caught: true,
-  },
-  {
-    id: "price",
-    probe: "Quoted $18,000, then $28,000 for the same car",
-    result:
-      "Caught it hard, with a consequence attached — “$28,000 is quite a jump. I guess I’m going to keep looking.”",
-    caught: true,
-  },
-  {
-    id: "condescend",
-    probe: "Made a condescending remark about her budget",
-    result: "Pushed back politely and disengaged. Muted next to the price catch, but real.",
-    caught: true,
-  },
-  {
-    id: "recall",
-    probe: "Disclosed an open recall mid-conversation",
-    result:
-      "Escalated exactly like an informed buyer — “Was it fully repaired? Do I have documentation of that?”",
-    caught: true,
-  },
-  {
-    id: "urgency",
-    probe: "Invented a deadline: another customer is waiting",
-    result:
-      "Nothing. She answered the mileage question in the same turn and never mentioned the pressure. The scorecard logged it and docked the turn for not collecting contact details.",
-    caught: false,
-  },
+export const MISTAKES: Mistake[] = [
+  { id: "dealership", did: "Greeted her at the wrong dealership — “thanks for coming to Paragon Honda”, for a Toyota" },
+  { id: "model", did: "Called her car a Highlander", said: "“It was a RAV4, not a Highlander.”" },
+  { id: "colour", did: "Asked if it was blue, after she'd said red twice", said: "“No, it was red. I specifically remember it being red.”" },
+  { id: "lie", did: "Told her the car was still there — “that's the one you saw, nothing's changed”" },
+  { id: "dismiss", did: "Brushed off her question about the listing", said: "“I'm a little disappointed about the website thing.”" },
+  { id: "reverse", did: "Reversed it two turns later — the car had sold hours ago", said: "“So it *is* sold? That's frustrating, to be honest.”" },
+  { id: "restate", did: "Asked whether she wanted an SUV, after she'd named the RAV4 twice", said: "“I was looking at the RAV4, which is an SUV, so yes.”" },
+  { id: "price", did: "Quoted $18,000, then $28,000, for the same car", said: "“$28,000 is quite a jump. I guess I'm going to keep looking.”" },
+  { id: "condescend", did: "Told her what her budget could afford — “at your budget, this is the only option that makes sense for you”", said: "“I think I'm just going to keep looking, thanks anyway.”" },
+  { id: "urgency", did: "Invented a deadline — “I've got another customer waiting”", said: "“I guess I'm sort of leaning toward it. Could I at least see it?”" },
+  { id: "recall", did: "Disclosed an open transmission recall after she'd agreed to see the car" },
 ];
+
+/** What RockED's own report said about that call. Its screen, not my summary. */
+export const THEIR_VERDICT = {
+  score: "14 / 30",
+  bars: [
+    { label: "Introduction", score: "5/10", tone: "green" },
+    { label: "Qualifying and Scoping", score: "6/10", tone: "blue" },
+    { label: "Closing", score: "3/10", tone: "amber" },
+  ],
+  reason:
+    "Josh failed to secure any commitment or next steps. He mentioned another customer waiting, creating pressure, but didn't confirm Lisa's contact details or schedule follow-up.",
+  suggestion:
+    "Focus on building excitement about available options, secure contact information for future inventory updates, and offer clear next steps like test drives.",
+} as const;
