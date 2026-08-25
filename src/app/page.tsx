@@ -4,6 +4,7 @@ import { CHANGES, MISTAKES, THEIR_VERDICT, type Change } from "@/components/tour
 import { Deck } from "@/components/deck/Deck";
 import { Slide } from "@/components/deck/Slide";
 import { Shot } from "@/components/deck/Shot";
+import { Comparison } from "@/components/deck/Comparison";
 import {
   Assumed,
   Cite,
@@ -121,7 +122,6 @@ export default function SubmissionPage() {
               src="/after/report.png"
               alt="The redesigned report, headed “You lost her.”"
               label="In the prototype"
-              mine
             />
           </div>
         }
@@ -331,7 +331,7 @@ export default function SubmissionPage() {
             A report naming the one thing that cost the call, and the drill for it.
           </Fact>
           <Fact term="Drill">
-            Coverage across eight customers, plus scenarios the rep writes himself.
+            Coverage across eight customer personas, plus scenarios the rep writes himself.
           </Fact>
           <Fact term="Prove">
             A profile and a GM view that put practice next to the floor.
@@ -461,11 +461,14 @@ export default function SubmissionPage() {
  * prototype should still see what changed, which is the whole reason this format
  * replaced the prose write-up.
  *
- * `alsoShort` and `caveat` are deliberately not rendered here even though both
- * exist on the change. They're the second and third argument, /tour has room for
- * them, and a deck slide carrying five stacked paragraphs is the thing this pass
- * was fixing. The stated limits still ship — on the walkthrough, next to the
- * screen they apply to.
+ * The comparison is `Comparison`, shared with the walkthrough, so the two
+ * surfaces can't drift on what a before/after looks like. It replaced two
+ * stacked paragraphs whose old-side label was purple — which on these pages
+ * means "RockED's", but in a two-column layout read as "this is the better one."
+ *
+ * At most one subordinate line here. The walkthrough has room for `limit`, `note`
+ * and `tryIt`; a slide doesn't, and a deck slide carrying five stacked paragraphs
+ * is exactly what this format exists to prevent.
  */
 function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
   const desktop = c.frame === "desktop";
@@ -492,38 +495,24 @@ function ChangeSlide({ change: c, n }: { change: Change; n: number }) {
             src={c.afterShot}
             alt={`In the prototype — ${c.title}`}
             label="In the prototype"
-            mine
             desktop={desktop}
           />
         </div>
       }
     >
-      <p className="text-doc-body text-r-ink-2">
-        <span className="mono mr-[6px] text-doc-label uppercase text-r-brand">
-          today
-        </span>
-        {c.beforeShort ?? c.before}
-      </p>
-      <p className="mt-5 text-doc-body text-r-ink-2">
-        <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
-          instead
-        </span>
-        {c.afterShort ?? c.after}
-      </p>
-      {c.partTwo && (
-        <p className="mt-5 text-doc-body text-r-ink-2">
-          <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
-            and part two
-          </span>
-          {c.partTwo}
-        </p>
-      )}
-      {(c.forTheRepShort ?? c.forTheRep) && (
-        <p className="mt-5 text-doc-body text-r-ink-2">
-          <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
-            why he&rsquo;d use it
-          </span>
-          {c.forTheRepShort ?? c.forTheRep}
+      <Comparison today={c.today} build={c.build} />
+
+      {/* `limit` wins where a change has both: a stated limit is the one a
+          reviewer is entitled to see. `tryIt` never appears on the deck — its
+          phone is a screenshot, so the invitation can't be taken up. */}
+      {(c.limit ?? c.note) && (
+        <p className="mt-7 text-doc-small text-r-ink-3">
+          {c.limit && (
+            <span className="mono mr-[6px] text-doc-label uppercase text-r-ink-4">
+              stated limit
+            </span>
+          )}
+          {c.limit ?? c.note}
         </p>
       )}
     </Slide>

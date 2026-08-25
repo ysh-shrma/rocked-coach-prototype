@@ -19,86 +19,50 @@ export type TourScreen =
 
 export type Change = {
   id: string;
-  /** What the annotation column leads with. */
+  /** The claim. A full sentence the step is arguing, not a feature name. */
   title: string;
   /** Which prototype screen sits in the frame for this change. */
   screen: TourScreen;
   /**
    * The manager view is a desktop console, not a phone screen — a GM works at a
    * desk with a CRM open. Change 5 therefore swaps the device frame rather than
-   * showing a phone and talking about a desktop, which is what it did first and
-   * read as a mismatch.
+   * showing a phone and talking about a desktop, which read as a mismatch.
    */
   frame?: "phone" | "desktop";
-  /** RockED as it is today — the thing this change is arguing against. */
-  before: string;
-  /** What the prototype does instead. */
-  after: string;
   /**
-   * The same two at one line each, for the deck — same contract as `alsoShort`.
+   * The comparison, as bullets rather than prose — the two halves of one thing,
+   * before and after.
    *
-   * The walkthrough has a column and a reader who chose to be there; a slide has
-   * neither. The deck reads `beforeShort ?? before`, so a change that doesn't
-   * need a short form simply omits it and nothing drifts out of sync.
+   * This replaced ten prose fields (before/after and their Short variants, also,
+   * alsoShort, partTwo, caveat, forTheRep, forTheRepShort). Two stacked
+   * paragraphs under two labels is not a comparison, it's a document: a reader
+   * got to the end of both before realising the second described the same screen
+   * as the first. Bullets in two cards say "these are the same thing, twice" at a
+   * glance, which is the entire job.
+   *
+   * Keep each item under about eight words. An item that needs a comma splice is
+   * two items, or it belongs in `limit` / `note`.
    */
-  beforeShort?: string;
-  afterShort?: string;
+  today: string[];
+  build: string[];
   /**
    * One line, and it has to be a consequence rather than a feature. "Now the
-   * call can be lost" changes "added a sentiment meter" — the feature is visible
+   * call can be lost" beats "added a sentiment meter" — the feature is visible
    * in the phone already, the consequence is the argument.
    */
   consequence: string;
-  /**
-   * The before/after pair the deck shows instead of paragraphs.
-   *
-   * `beforeShot` is deliberately absent on the last two changes: RockED has no
-   * rep profile and no manager view, so there is no screen to put there. The
-   * deck renders that absence as an empty frame rather than skipping the slot,
-   * because the missing screen *is* the finding on those two.
-   */
+  /** The before/after screenshot pair the deck shows. Absent on the last two
+   *  changes: RockED has no rep profile and no manager view, and the empty frame
+   *  is the finding. */
   beforeShot?: string;
   afterShot?: string;
+  /** One line. A limit stated rather than hidden. */
+  limit?: string;
+  /** One line. A second argument the screens don't carry on their own. */
+  note?: string;
   /**
-   * A second argument this change carries that the screen alone doesn't explain.
-   * Used sparingly — two of the five. Kept distinct from `consequence`, which is
-   * the one-line payoff, and from `caveat`, which is a stated limit.
-   */
-  also?: string;
-  /**
-   * The same argument at one line, for the deck.
-   *
-   * These two carry improvements 2 and 3 of the seven, so dropping them on the
-   * deck would quietly reduce the submission to five. A slide has no room for
-   * `also`'s full paragraph and the walkthrough does, so the argument is kept
-   * and the words are not.
-   */
-  alsoShort?: string;
-  /**
-   * The commercial answer, where the change has one: what this does for the rep's
-   * own numbers or for the manager's ability to enforce. Mike's objection to the
-   * first draft was that it said what the rep learns and never what's in it for
-   * him \u2014 floor staff are coin-operated.
-   */
-  forTheRep?: string;
-  /** The same at one line, for the deck. */
-  forTheRepShort?: string;
-  /**
-   * A second half of the same change, where the change genuinely has two parts.
-   *
-   * Change 1 is the only one today: the call can be lost, *and* the turn-taking
-   * has to be real. That second half used to live in `caveat`, which framed it
-   * as a shortfall — "here's what the mock can't do". It isn't a shortfall, it's
-   * a requirement being specified, and stating it that way is the stronger and
-   * more accurate position. A clickable prototype still can't demonstrate it,
-   * which the copy says outright.
-   */
-  partTwo?: string;
-  /** Optional caveat stated rather than hidden. */
-  caveat?: string;
-  /**
-   * Only on changes whose phone is genuinely interactive — change 1 today. Says so
-   * out loud, because a live screen and a pinned one look identical, and a
+   * Only on changes whose phone is genuinely interactive — change 1 today. Says
+   * so out loud, because a live screen and a pinned one look identical, and a
    * reviewer who assumes the frame is a picture never takes a turn.
    */
   tryIt?: string;
@@ -111,24 +75,20 @@ export const CHANGES: Change[] = [
     screen: "call",
     beforeShot: "/before/call.png",
     afterShot: "/after/call.png",
-    before:
-      "Push-to-talk, unlimited think time, and the call only ends when the rep decides to end it. Across three sessions the customer's willingness to proceed barely moved no matter what I did.",
-    after:
-      "One sentiment read the rep can see moving, with the walk-away point marked. Drop below it and she leaves — presented as a lost customer, not a timeout.",
-    beforeShort:
-      "Push-to-talk, unlimited think time, and her willingness to proceed barely moved whatever I did.",
-    afterShort:
-      "One sentiment read the rep can watch move, with the walk-away point marked.",
-    also:
-      "The card under her question is the other half. Today a rep answers \u201cis it in stock, what does it cost\u201d from memory \u2014 a real rep has an inventory screen open. Guessing rewards sounding confident over being right, and a rep who guesses wrong on price is lying to the customer even when he didn\u2019t mean to. Same trust mechanic, arrived at by accident instead of on purpose.",
-    alsoShort:
-      "The vehicle card under her question is a second change on the same screen. Today a rep answers \u201cis it in stock, what does it cost\u201d from memory, which rewards sounding confident over being right.",
-    consequence:
-      "A pressure tactic now costs something, so practising one teaches the opposite of what it teaches today.",
-    tryIt:
-      "The phone is live on this change — tap the mic and pick a line. Every choice moves the meter.",
-    partTwo:
-      "Real-time turn-taking. She doesn’t wait while you compose — push-to-talk hands a rep unlimited think time, and having to answer *now* is half of what makes a hard conversation hard. Specified, not built: a clickable mock can’t demonstrate pacing.",
+    today: [
+      "Push-to-talk, unlimited think time",
+      "She never walks away, whatever you do",
+      "\u201cIs it in stock? What\u2019s it cost?\u201d \u2014 answered from memory",
+    ],
+    build: [
+      "One sentiment read, always on screen",
+      "Walk-away line marked \u2014 cross it and she\u2019s gone",
+      "Her question answered from live inventory",
+    ],
+    consequence: "A pressure tactic now costs you the call.",
+    limit:
+      "Real-time turn-taking is specified, not built. A clickable mock can\u2019t demonstrate pacing.",
+    tryIt: "This phone is live. Tap the mic and pick a line.",
   },
   {
     id: "verdict",
@@ -136,24 +96,19 @@ export const CHANGES: Change[] = [
     screen: "report",
     beforeShot: "/before/report.png",
     afterShot: "/after/report.png",
-    before:
-      "Three categories — Introduction, Qualifying, Closing — each out of ten. I scored 14/30 after lying about a price and leaning on a fake deadline, which reads as partway there rather than as a failure.",
-    after:
-      "The outcome in words a sales manager would use, then the one pillar that cost the call, then the full score. The gap is the biggest thing on the screen.",
-    beforeShort:
-      "14/30 after lying about a price and inventing a deadline — which reads as partway there.",
-    afterShort:
-      "The outcome in a sales manager’s words, then the one pillar that cost the call.",
-    also:
-      "The report offers a drill on the exact moment that cost the call, because the minute after a bad call is when the lesson is hottest. The drill never rewrites what happened \u2014 the sentiment drop, the ending and the score stay logged. If a replay could quietly undo the result, \u201creplay\u201d becomes a reset button and the consequence mechanic is gone.",
-    alsoShort:
-      "It also offers a drill on the exact moment that cost the call, and the drill can\u2019t rewrite the logged result \u2014 otherwise \u201creplay\u201d is just a reset button.",
-    consequence:
-      "A rep can't leave a failed call thinking they did fine, which is exactly what today's scorecard allows.",
-    forTheRep:
-      "And the drill is the point, not the grade. Floor staff are paid on units \u2014 nobody opens a training app to feel informed. This one hands back the exact thing that cost the deal and lets him run it again in ninety seconds.",
-    forTheRepShort:
-      "It hands back the exact moment that cost the deal, runnable again in ninety seconds.",
+    today: [
+      "Introduction / Qualifying / Closing",
+      "I lied about price and faked a deadline",
+      "14/30 \u2014 reads as partway there",
+    ],
+    build: [
+      "The outcome first, in a manager\u2019s words",
+      "The one moment that cost the call, named",
+      "A drill on that exact moment",
+    ],
+    consequence: "A rep can\u2019t leave a failed call thinking he did fine.",
+    note:
+      "The drill can\u2019t rewrite the logged result. Otherwise replay is just a reset button.",
   },
   {
     id: "coverage",
@@ -161,32 +116,32 @@ export const CHANGES: Change[] = [
     screen: "hub",
     beforeShot: "/before/scenarios.png",
     afterShot: "/after/hub.png",
-    before:
-      "Two fixed sales scenarios. Run them enough times and you look practised without ever meeting a difficult customer.",
-    beforeShort:
-      "Two fixed sales scenarios. Repeat them and you look practised.",
-    after:
-      "Eight customers, each proving one named capability, with coverage visible at a glance and the next gap recommended from your last call.",
-    consequence:
-      "Progress stops meaning repetition and starts meaning range.",
+    today: ["Two fixed scenarios", "Repeat them and you look practised"],
+    build: [
+      "Eight customer personas, one named capability each",
+      "Coverage visible at a glance",
+      "Next gap chosen from your last call",
+    ],
+    consequence: "Progress stops meaning repetition and starts meaning range.",
   },
   {
     id: "floor",
     title: "Practice connects to the floor",
     screen: "profile",
     afterShot: "/after/profile.png",
-    before:
-      "No rep profile at all. Nothing links what a rep practised to what happened on a real call, so practice and performance are two unconnected facts about the same person.",
-    after:
-      "Two independent layers, not a fallback. Base works for any dealership on day one, built from in-app practice alone. Enhanced connects the CRM \u2014 VinSolutions, DealerSocket or Elead \u2014 and the phone system, so the same profile carries his real numbers: close rate and upsell per RO next to the pillar he drilled, and the recorded call the drill came from.",
-    beforeShort:
-      "No rep profile at all. Practice and performance stay two unconnected facts about one person.",
-    afterShort:
-      "Base works day one. Enhanced reads VinSolutions, DealerSocket or Elead plus the phone system, and puts his close rate and upsell per RO beside the pillar he drilled.",
-    consequence:
-      "This is the mechanism that would prove or kill the published upsell-lift number. Right now nothing in the product can.",
-    caveat:
-      "The real-call side is seeded data, tagged as such on screen. It shows the shape of the validation, not a validation.",
+    today: ["No rep profile at all", "Practice and floor performance never meet"],
+    // Four against two, deliberately. The sparse left column is the point on this
+    // step: there is no RockED screen to show either, which is why the deck
+    // renders an empty frame rather than a screenshot.
+    build: [
+      "Base \u2014 practice data alone, works day one",
+      "Enhanced \u2014 reads VinSolutions, DealerSocket or Elead",
+      "Close rate and upsell per RO, beside the pillar he drilled",
+      "His recorded calls \u2014 how he loses them, drilled",
+    ],
+    consequence: "This would prove or kill the published upsell-lift number.",
+    limit:
+      "Real-call data is seeded, tagged on screen. The shape of validation, not validation.",
   },
   {
     id: "manager",
@@ -194,20 +149,16 @@ export const CHANGES: Change[] = [
     screen: "manager",
     afterShot: "/after/manager.png",
     frame: "desktop",
-    before:
-      "A GM sees nothing. Each rep's score is visible only to that rep, so no one is accountable for whether practice is working.",
-    beforeShort:
-      "A GM sees nothing. No one is accountable for whether practice works.",
-    after:
-      "The team ranked by who needs coaching most, each rep's gaps named, and one action: assign the specific scenario, with the context that triggered it attached.",
-    afterShort:
-      "The team ranked by who needs coaching most, and one action: assign the scenario.",
+    today: ["A GM sees nothing", "Each score is visible only to that rep"],
+    build: [
+      "Team ranked by who needs coaching most",
+      "Each rep\u2019s gaps named",
+      "One action: assign the scenario",
+    ],
     consequence:
-      "Nobody at a dealership is paid to own whether training works. This is the surface that would let someone try.",
-    forTheRep:
-      "Assignments carry the moment that triggered them \u2014 \u201cafter your call with a price-haggler on Tuesday\u201d, never a bare course name. And they surface on the desk's own list rather than waiting in an inbox, because \u201cthe manager will remember\u201d is how training dies.",
-    forTheRepShort:
-      "Assignments name the call that triggered them, and land on the desk’s list, not an inbox.",
+      "Nobody at a dealership owns whether training works. This is where someone could.",
+    note:
+      "Assignments name the call that triggered them, and land on the desk\u2019s list, not an inbox.",
   },
 ];
 

@@ -71,7 +71,7 @@ export function PreCall({
         </motion.div>
       </div>
       <motion.div className="shrink-0 border-t border-r-line p-4" {...rise(0.35)}>
-        <Btn size="lg" className="w-full" onClick={onBegin}>
+        <Btn size="lg" className="hint w-full" onClick={onBegin}>
           <Phone size={16} strokeWidth={2.3} />
           Begin call
         </Btn>

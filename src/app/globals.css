@@ -272,6 +272,16 @@
   --text-doc-body: clamp(17px, 1.12vw, 20px);
   --text-doc-body--line-height: 1.62;
 
+  /* List items in a comparison card. Sits between body and h3 on size and stays
+     regular weight — doc-h3 is the right size for these but carries 700, and
+     overriding a token's weight with a utility is order-dependent and fragile.
+     The hierarchy it belongs to: h2 title (bold) -> doc-list bullets (regular)
+     -> h3 consequence (bold, behind its ink rule). The consequence reads as the
+     payoff because it's bold and ruled, not because it's the biggest thing. */
+  --text-doc-list: clamp(18px, 1.2vw, 22px);
+  --text-doc-list--line-height: 1.45;
+  --text-doc-list--font-weight: 400;
+
   --text-doc-small: clamp(14px, 0.92vw, 16px);
   --text-doc-small--line-height: 1.5;
 
@@ -528,6 +538,93 @@ body {
 }
 .ring-invite {
   animation: ring-invite 1.9s ease-out infinite;
+}
+
+/* ---- The click hint ----
+
+   A reviewer who lands in the prototype cold stares at a screen, doesn't spot the
+   control that advances it, and concludes nothing works — the exact failure the
+   mic ring above was added to fix, on every other screen too.
+
+   A box-shadow halo, NOT the mic's scaling ring, and that difference is the whole
+   design. `ring-invite` scales a bordered box to 1.6x, which reads as a pulse
+   around a 56px circle and as two stray horizontal rules around a full-width
+   card: the left and right edges scale straight off the side of the phone, so all
+   you see is the top and bottom sweeping outward. A spreading box-shadow grows
+   from the element's own edge at its own border-radius, so it reads identically
+   on a pill, a card, or a circle.
+
+   It also costs nothing structurally. No pseudo-element, so no collision with an
+   existing ::after and no need to force `position: relative` on five controls
+   that didn't have it. The entire footprint inside the prototype is the word
+   `hint` in five className strings — `Btn` already forwards className, so no
+   shared component needed a new prop. Deleting this block and those five words
+   removes the feature completely.
+
+   Three iterations, not infinite. The mic pulses until the rep's first turn
+   because there is exactly one thing to do on that screen; a permanent pulse on
+   every screen becomes wallpaper. ~5.7s is a nudge, and it restarts by itself on
+   each screen because the orchestrator remounts on the screen key.
+
+   Scoped to `.hint-on`, which only Explore mode sets. Guided pins its screens and
+   its navigation is inert, so a halo inviting a click that does nothing would be
+   worse than none — and keeping it out of Guided is also what stops the animation
+   leaking into deck-shots.mjs captures, which are taken from /tour.
+
+   The prefers-reduced-motion block at the end of this file zeroes it for free,
+   which is why this is a CSS keyframe and not a framer-motion loop. */
+@keyframes hint-halo {
+  0% { box-shadow: 0 0 0 0 rgba(91, 62, 230, 0.5); }
+  70% { box-shadow: 0 0 0 9px rgba(91, 62, 230, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(91, 62, 230, 0); }
+}
+
+/* The same halo, reworked for controls sitting on a dark surface.
+   RockED's purple against `hero-dark` is purple on a dark *purple* gradient
+   (#251b55 -> #100f19), so the light-surface halo above is present and unreadable
+   there. Three differences, and the timing is the one that actually mattered:
+
+   1. TWO LAYERS, not one. A crisp inner ring reads as an outline at any size; the
+      soft outer one is the glow. A single spreading shadow only ever reads as a
+      smudge on a dark ground.
+   2. HOLD, THEN FADE. The light-surface curve fades opacity across the same 70%
+      that grows the spread, so the ring is opaque only while it is 0px wide and
+      is down to ~0.2 alpha by the time it is big enough to notice — it is never
+      both large and solid. Here it grows to full size at 40% still at 0.95, and
+      only then fades. That, more than the colour, is why the first version
+      disappeared.
+   3. brand-200 rather than brand-300, and not white: the control it wraps on Home
+      is itself a white pill, so a white glow around a white button reads as a
+      blur. Lavender reads as a halo and stays inside the brand.
+
+   The outer layer caps at 12px because the pill sits 17px from `hero-dark`'s
+   padding edge and that surface is `overflow: hidden` — anything wider gets its
+   corners cut off rather than fading out.
+
+   Two keyframe sets rather than one custom property swapped per context. A var
+   inside a keyframe does resolve, but this is a submission that has to render
+   first time on a stranger's laptop, and a second block buys certainty for
+   nothing. */
+@keyframes hint-halo-dark-surface {
+  0% {
+    box-shadow: 0 0 0 0 rgba(211, 194, 254, 0.95), 0 0 0 0 rgba(211, 194, 254, 0.45);
+  }
+  40% {
+    box-shadow: 0 0 0 3px rgba(211, 194, 254, 0.95), 0 0 0 12px rgba(211, 194, 254, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 3px rgba(211, 194, 254, 0), 0 0 0 12px rgba(211, 194, 254, 0);
+  }
+}
+
+.hint-on .hint {
+  animation: hint-halo 1.9s ease-out 3;
+}
+/* The two dark scopes in the product. Only `hero-dark` carries a hint today;
+   `coach-dark` is listed so the next one placed there is right by default. */
+.hint-on .hero-dark .hint,
+.hint-on .coach-dark .hint {
+  animation-name: hint-halo-dark-surface;
 }
 
 @keyframes shake-bad {
