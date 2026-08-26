@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter, IBM_Plex_Mono, Plus_Jakarta_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const inter = Inter({
@@ -72,6 +73,12 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-inter), ui-sans-serif, system-ui, sans-serif" }}
       >
         {children}
+        {/* Page views across every route: the deck, the transcripts, the
+            prototype and the walkthrough. In the root layout rather than on one
+            page because the question worth answering is which of them a reviewer
+            actually opens, and whether anyone gets past the deck. No-ops in
+            development and reports nothing until the app is deployed. */}
+        <Analytics />
       </body>
     </html>
   );
