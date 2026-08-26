@@ -23,8 +23,13 @@ import { useEffect, useState } from "react";
  * Hidden below 640px, which is where deck-stage drops the rail regardless.
  */
 export function RailToggle() {
-  // deck-stage's own default: only a stored "0" hides the rail.
-  const [shown, setShown] = useState(true);
+  /**
+   * Starts false because the deck now defaults to a hidden rail, seeded into
+   * deck-stage's own localStorage key before it loads (see page.tsx). The server
+   * can't read that key, so this is the value matching both the default and the
+   * common case; the effect below corrects it for anyone who kept the rail open.
+   */
+  const [shown, setShown] = useState(false);
 
   useEffect(() => {
     try {

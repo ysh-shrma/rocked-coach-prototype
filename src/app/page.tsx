@@ -94,6 +94,16 @@ export default function SubmissionDeckPage() {
         dangerouslySetInnerHTML={{ __html: slides }}
       />
 
+      {/* Seeds deck-stage's own preference key before deck-stage.js runs, so the
+          rail starts hidden instead of appearing and then sliding away. It only
+          writes when nothing is stored, so a reviewer who opens the rail keeps it
+          open next visit: this sets the default, it does not override a choice.
+          beforeInteractive matters - afterInteractive would land after the
+          component had already read the key. */}
+      <Script id="deck-rail-default" strategy="beforeInteractive">
+        {`try{var k='deck-stage.railVisible';if(localStorage.getItem(k)===null)localStorage.setItem(k,'0')}catch(e){}`}
+      </Script>
+
       <Script src="/deck-stage.js" strategy="afterInteractive" />
     </>
   );
