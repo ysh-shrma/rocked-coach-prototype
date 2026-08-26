@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Script from "next/script";
+import { RailToggle } from "@/components/deck/RailToggle";
 
 /**
  * The submission deck. This is the URL that gets sent.
@@ -56,6 +57,22 @@ const deckCss = `
   deck-stage:not(:defined) { visibility: hidden; }
   deck-stage a { color: #16151f; }
   deck-stage a:hover { color: #0f766e; }
+
+  /* Page chrome, not slide content: sits above the stage and outside its scale
+     transform. Quiet at rest so it never competes with slide one. */
+  .rail-toggle {
+    position: fixed; left: 14px; top: 14px; z-index: 40;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px 8px 11px; border-radius: 999px;
+    border: 1px solid #d9d5e4; background: #ffffff; color: #6b6779;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; opacity: 0.55;
+    transition: opacity .15s ease, color .15s ease, border-color .15s ease;
+    box-shadow: 0 1px 2px rgba(30,15,60,.05), 0 8px 22px -14px rgba(30,15,60,.3);
+  }
+  .rail-toggle:hover, .rail-toggle:focus-visible { opacity: 1; color: #16151f; border-color: #948fa3; }
+  @media (max-width: 640px) { .rail-toggle { display: none; } }
 `;
 
 export default function SubmissionDeckPage() {
@@ -69,11 +86,23 @@ export default function SubmissionDeckPage() {
       />
       <style dangerouslySetInnerHTML={{ __html: deckCss }} />
 
+      <RailToggle />
+
       <deck-stage
         width="1920"
         height="1080"
         dangerouslySetInnerHTML={{ __html: slides }}
       />
+
+      {/* Seeds deck-stage's own preference key before deck-stage.js runs, so the
+          rail starts hidden instead of appearing and then sliding away. It only
+          writes when nothing is stored, so a reviewer who opens the rail keeps it
+          open next visit: this sets the default, it does not override a choice.
+          beforeInteractive matters - afterInteractive would land after the
+          component had already read the key. */}
+      <Script id="deck-rail-default" strategy="beforeInteractive">
+        {`try{var k='deck-stage.railVisible';if(localStorage.getItem(k)===null)localStorage.setItem(k,'0')}catch(e){}`}
+      </Script>
 
       <Script src="/deck-stage.js" strategy="afterInteractive" />
     </>
