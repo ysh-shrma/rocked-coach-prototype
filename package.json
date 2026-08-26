@@ -10,6 +10,7 @@
     "lint:design": "node scripts/lint-design.mjs"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.469.0",
     "next": "16.2.4",
