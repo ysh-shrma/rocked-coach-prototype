@@ -198,7 +198,7 @@ export function PrototypeShell({ initialMode }: { initialMode: Mode }) {
           {isGuided ? (
             <GuidedAside g={guided} />
           ) : (
-            <ExploreAside s={explore} onSwitchToGuided={() => switchTo("guided")} />
+            <ExploreAside s={explore} />
           )}
         </div>
       </div>

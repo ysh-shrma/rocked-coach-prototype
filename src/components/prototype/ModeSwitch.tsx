@@ -27,8 +27,8 @@ export function ModeSwitch({
     >
       {(
         [
-          { id: "explore", label: "Explore" },
-          { id: "guided", label: "Guided" },
+          { id: "guided", label: "Guided Walkthrough" },
+          { id: "explore", label: "Live Prototype" },
         ] as const
       ).map((opt) => {
         const active = mode === opt.id;
